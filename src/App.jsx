@@ -1,36 +1,61 @@
-import { useState } from 'react'
-import './App.css'
+import { useState, useEffect } from "react";
+import "./App.css";
 
 function App() {
-  const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY;
-  const BASE_URL = 'https://api.themoviedb.org/3';
-  const [query, setQuery] = useState('');
-  const [movies, setMovies] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [expandedMovieId, setExpandedMovieId] = useState(null); // Novo estado
+  const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY; //trazendo a chave que esta no arquivo .env
+  const BASE_URL = "https://api.themoviedb.org/3"; // URL base da API
 
+  const [query, setQuery] = useState(""); // para guardar a consulta de busca do usuário
+  const [movies, setMovies] = useState([]); // filmes retornados pela busca
+  const [loading, setLoading] = useState(false); // Estado para indicar carregamento
+  const [expandedMovieId, setExpandedMovieId] = useState(null); // ID do filme expandido (detalhes visíveis)
+
+  const [trending, setTrending] = useState([]); // Armazena os filmes em alta (trending)
+
+  // Hook para buscar os filmes em alta assim que o componente for montado (pagina carregar)
+  useEffect(() => {
+    const fetchTrendingMovies = async () => {
+      const response = await fetch(`${BASE_URL}/trending/movie/week`, {
+        headers: {
+          Authorization: `Bearer ${TMDB_API_KEY}`,
+          accept: "application/json",
+        },
+      });
+      const data = await response.json();
+      setTrending(data.results.slice(0, 5)); // pega os top 5 trending
+    };
+
+    fetchTrendingMovies(); // Chama a função ao montar o componente
+  }, []);
+
+  // Função para buscar filmes com base na consulta que o usuario fizer
   const searchMovies = async () => {
-    setLoading(true);
+    setLoading(true); // Ativa o estado de carregamento
+
+    // Faz a requisição para a API de busca do Banco de dados tmdb
     const response = await fetch(
-      `${BASE_URL}/search/movie?query=${encodeURIComponent(query)}&include_adult=false&language=en-US&page=1`,
+      `${BASE_URL}/search/movie?query=${encodeURIComponent(
+        query
+      )}&include_adult=false&language=en-US&page=1`,
       {
         headers: {
-          'Authorization': `Bearer ${TMDB_API_KEY}`,
-          'accept': 'application/json'
-        }
+          Authorization: `Bearer ${TMDB_API_KEY}`,
+          accept: "application/json",
+        },
       }
     );
-    const data = await response.json();
-    setMovies(data.results);
-    setLoading(false);
-    setExpandedMovieId(null); // Resetar o filme expandido ao fazer nova busca
+    const data = await response.json(); // Converte a resposta em JSON
+    setMovies(data.results); // Atualiza os filmes buscados
+    setLoading(false); // Finaliza o carregamento
+    setExpandedMovieId(null); // Reseta o view expandido (detalhes)
   };
 
+  // Função executada ao enviar o formulário de busca(clicar no botao)
   const handleSubmit = (e) => {
     e.preventDefault();
     searchMovies();
   };
-
+  // Alterna exibição de detalhes do filme (mostrar/ocultar) no botao de view
   const toggleMovieDetails = (movieId) => {
     setExpandedMovieId(expandedMovieId === movieId ? null : movieId);
   };
@@ -38,7 +63,7 @@ function App() {
   return (
     <div className="app">
       <h1>TMDB Movie Search</h1>
-      
+
       <form onSubmit={handleSubmit}>
         <input
           type="text"
@@ -47,36 +72,66 @@ function App() {
           placeholder="Search for movies..."
         />
         <button type="submit" disabled={loading}>
-          {loading ? 'Searching...' : 'Search'}
+          {loading ? "Searching..." : "Search"}
         </button>
       </form>
-      
+
+      {/* Se ainda não houve uma busca (lista de filmes está vazia), mostra os trending */}
+      {movies.length === 0 && (
+        <>
+          <h2>🔥 Trending This Week</h2>
+          <div className="movies">
+            {trending.map((movie) => (
+              <div key={movie.id} className="movie">
+                {movie.poster_path && (
+                  <img
+                    src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
+                    alt={movie.title}
+                  />
+                )}
+                <h3>{movie.title}</h3>
+                <p>{movie.release_date}</p>
+                <p>Rating: {movie.vote_average} / 10</p>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+            {/* Se houver filmes buscados, exibe os 3 primeiros */}
       <div className="movies">
-        {movies.map(movie => (
+        {movies.slice(0, 3).map((movie) => (
           <div key={movie.id} className="movie">
             {movie.poster_path && (
-              <img 
-                src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`} 
+              <img
+                src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
                 alt={movie.title}
               />
             )}
             <h3>{movie.title}</h3>
             <p>{movie.release_date}</p>
-            <p>Rating: {movie.vote_average}</p>
-            
-            <button 
+            <p>Rating: {movie.vote_average} / 10</p>
+
+            <button
               onClick={() => toggleMovieDetails(movie.id)}
               className="details-button"
             >
-              {expandedMovieId === movie.id ? 'Hide Details' : 'View Details'}
+              {expandedMovieId === movie.id ? "Hide Details" : "View Details"}
             </button>
-            
+
             {expandedMovieId === movie.id && (
               <div className="movie-details">
-                <p><strong>Overview:</strong> {movie.overview}</p>
-                <p><strong>Popularity:</strong> {movie.popularity}</p>
-                <p><strong>Original Language:</strong> {movie.original_language}</p>
-                <p><strong>Vote Count:</strong> {movie.vote_count}</p>
+                <p>
+                  <strong>Overview:</strong> {movie.overview}
+                </p>
+                <p>
+                  <strong>Popularity:</strong> {movie.popularity}
+                </p>
+                <p>
+                  <strong>Original Language:</strong> {movie.original_language}
+                </p>
+                <p>
+                  <strong>Vote Count:</strong> {movie.vote_count}
+                </p>
               </div>
             )}
           </div>
@@ -86,4 +141,4 @@ function App() {
   );
 }
 
-export default App
+export default App;
