@@ -59,7 +59,7 @@ function App() {
   const toggleMovieDetails = (movieId) => {
     setExpandedMovieId(expandedMovieId === movieId ? null : movieId);
   };
-
+//testando
   return (
     <div className="app">
       <h1>TMDB Movie Search</h1>
