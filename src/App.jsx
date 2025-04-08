@@ -3,6 +3,7 @@ import "./App.css";
 
 function App() {
   const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY; //trazendo a chave que esta no arquivo .env
+  const WATCHMODE_API_KEY = import.meta.env.VITE_WATCHMODE_API_KEY;
   const BASE_URL = "https://api.themoviedb.org/3"; // URL base da API
 
   const [query, setQuery] = useState(""); // para guardar a consulta de busca do usuário
@@ -10,12 +11,14 @@ function App() {
   const [loading, setLoading] = useState(false); // Estado para indicar carregamento
   const [expandedMovieId, setExpandedMovieId] = useState(null); // ID do filme expandido (detalhes visíveis)
 
-  const [trendingDay, setTrendingDay] = useState([]); // Armazena os filmes em alta (trending)
-  const [trendingWeek, setTrendingWeek] = useState([]); // Armazena os filmes em alta (trending)
+  const [trendingDay, setTrendingDay] = useState([]); // Armazena os filmes em alta DIA (trending)
+  const [trendingWeek, setTrendingWeek] = useState([]); // Armazena os filmes em alta SEMANA (trending)
+
+  const [sortOption, setSortOption] = useState("popularity"); //opção que o usuário escolhe do Order By, já setado em popularidade(Filmes mais famosos)
 
   // Hook para buscar os filmes em alta assim que o componente for montado (pagina carregar)
   useEffect(() => {
-    const fetchTrendingMovies = async () => {
+    const TrendingMoviesDay = async () => {
       const dayResponse = await fetch(`${BASE_URL}/trending/movie/day`, {
         headers: {
           Authorization: `Bearer ${TMDB_API_KEY}`,
@@ -25,10 +28,24 @@ function App() {
       const dayData = await dayResponse.json();
       setTrendingDay(dayData.results.slice(0, 20)); // pega os top 20 trending DO DIA
     };
-    
 
+    TrendingMoviesDay(); // Chama a função ao montar o componente
+  }, []);
 
-    fetchTrendingMovies(); // Chama a função ao montar o componente
+  //Mesma função, porem para puxar os trendings da semana
+  useEffect(() => {
+    const TrendingMoviesWeek = async () => {
+      const dayResponse = await fetch(`${BASE_URL}/trending/movie/week`, {
+        headers: {
+          Authorization: `Bearer ${TMDB_API_KEY}`,
+          accept: "application/json",
+        },
+      });
+      const weekData = await dayResponse.json();
+      setTrendingWeek(weekData.results.slice(0, 20)); // pega os top 20 trending da SEMANA
+    };
+
+    TrendingMoviesWeek(); // Chama a função ao montar o componente
   }, []);
 
   // Função para buscar filmes com base na consulta que o usuario fizer
@@ -47,8 +64,8 @@ function App() {
         },
       }
     );
-    const data = await response.json(); // Converte a resposta em JSON
-    setMovies(data.results); // Atualiza os filmes buscados
+    const moviesData = await response.json(); // Converte a resposta em JSON
+    setMovies(moviesData.results); // Atualiza os filmes buscados
     setLoading(false); // Finaliza o carregamento
     setExpandedMovieId(null); // Reseta o view expandido (detalhes)
   };
@@ -62,13 +79,31 @@ function App() {
   const toggleMovieDetails = (movieId) => {
     setExpandedMovieId(expandedMovieId === movieId ? null : movieId);
   };
-//testando
+
+  //função para fazer o sort da lista dos filmes
+  const sortMovies = (moviess) => {
+    return [...moviess].sort((a, b) => {
+      switch (sortOption) {
+        case "popularity":
+          return b.popularity - a.popularity;
+        case "release_asc":
+          return new Date(a.release_date) - new Date(b.release_date);
+        case "release_desc":
+          return new Date(b.release_date) - new Date(a.release_date);
+        case "rating":
+          return b.vote_average - a.vote_average;
+        default:
+          return 0;
+      }
+    });
+  };
+  
+
   return (
     <div className="app">
-      <h1>TMDB Movie Search 🔎</h1>
-
+      <h1>Movie Search 🔎</h1>
       <div className="form-container">
-        <form onSubmit={handleSubmit} className = "form">
+        <form onSubmit={handleSubmit} className="form">
           <input
             type="text"
             value={query}
@@ -81,73 +116,89 @@ function App() {
           </button>
         </form>
       </div>
+      {/* Input para colocar a ordem que o usuário deseja para os filmes */}
+      {movies.length > 0 && (
+        <div className="sort-container">
+          <label>Order by:</label>
+          <select
+            id="sort"
+            value={sortOption}
+            onChange={(e) => setSortOption(e.target.value)}
+            className="sort-select"
+          >
+            <option value="popularity">Popularity</option>
+            <option value="rating">Rating</option>
+            <option value="release_desc">Newest</option>
+            <option value="release_asc">Oldest</option>
+          </select>
+        </div>
+      )}
 
       {/* Se ainda não houve uma busca (lista de filmes está vazia), mostra os trending */}
       {movies.length === 0 && (
         <>
-
           <h2>🔥 Trending Today 🔥</h2>
           <div className="trending">
-          <div className="movies">
-            {trendingDay.map((movie) => (
-              <div key={movie.id} className="movie">
-                {movie.poster_path && (
-                  <img
-                    src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
-                    alt={movie.title}
-                  />
-                )}
-                <h3>{movie.title}</h3>
-                <p>{movie.release_date}</p>
-                <p>Rating: {movie.vote_average} / 10</p>
-              </div>
-            ))}
+            <div className="movies">
+              {trendingDay.map((movie) => (
+                <div key={movie.id} className="movie">
+                  {movie.poster_path && (
+                    <img
+                      src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
+                      alt={movie.title}
+                    />
+                  )}
+                  <h3>{movie.title}</h3>
+                  <p>{movie.release_date}</p>
+                  <p>Rating: {movie.vote_average} / 10</p>
+                </div>
+              ))}
+            </div>
           </div>
-          </div>
-
-
-
         </>
       )}
-            {/* Se houver filmes buscados, exibe os 3 primeiros */}
+      {/* Se houver filmes buscados, exibe os 10 primeiros e faz um sort*/}
       <div className="movies">
-        {movies.slice(0, 30).map((movie) => (
-          <div key={movie.id} className="movie">
-            {movie.poster_path && (
-              <img
-                src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
-                alt={movie.title}
-              />
-            )}
-            <h3>{movie.title}</h3>
-            <p>{movie.release_date}</p>
-            <p>Rating: {movie.vote_average} / 10</p>
+        {sortMovies(movies)
+          .slice(0, 10)
+          .map((movie) => (
+            <div key={movie.id} className="movie">
+              {movie.poster_path && (
+                <img
+                  src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
+                  alt={movie.title}
+                />
+              )}
+              <h3>{movie.title}</h3>
+              <p>{movie.release_date}</p>
+              <p>Rating: {movie.vote_average} / 10</p>
 
-            <button
-              onClick={() => toggleMovieDetails(movie.id)}
-              className="details-button"
-            >
-              {expandedMovieId === movie.id ? "Hide Details" : "View Details"}
-            </button>
+              <button
+                onClick={() => toggleMovieDetails(movie.id)}
+                className="details-button"
+              >
+                {expandedMovieId === movie.id ? "Hide Details" : "View Details"}
+              </button>
 
-            {expandedMovieId === movie.id && (
-              <div className="movie-details">
-                <p>
-                  <strong>Overview:</strong> {movie.overview}
-                </p>
-                <p>
-                  <strong>Popularity:</strong> {movie.popularity}
-                </p>
-                <p>
-                  <strong>Original Language:</strong> {movie.original_language}
-                </p>
-                <p>
-                  <strong>Vote Count:</strong> {movie.vote_count}
-                </p>
-              </div>
-            )}
-          </div>
-        ))}
+              {expandedMovieId === movie.id && (
+                <div className="movie-details">
+                  <p>
+                    <strong>Overview:</strong> {movie.overview}
+                  </p>
+                  <p>
+                    <strong>Popularity:</strong> {movie.popularity}
+                  </p>
+                  <p>
+                    <strong>Original Language:</strong>{" "}
+                    {movie.original_language}
+                  </p>
+                  <p>
+                    <strong>Vote Count:</strong> {movie.vote_count}
+                  </p>
+                </div>
+              )}
+            </div>
+          ))}
       </div>
     </div>
   );
