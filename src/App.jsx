@@ -139,8 +139,26 @@ function App() {
         <>
           <h2>🔥 Trending Today 🔥</h2>
           <div className="trending">
-            <div className="movies">
+            <div className="movies-trending">
               {trendingDay.map((movie) => (
+                <div key={movie.id} className="movie">
+                  {movie.poster_path && (
+                    <img
+                      src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
+                      alt={movie.title}
+                    />
+                  )}
+                  <h3>{movie.title}</h3>
+                  <p>{movie.release_date}</p>
+                  <p>Rating: {movie.vote_average} / 10</p>
+                </div>
+              ))}
+            </div>
+          </div>
+          <h2>🔥 Trending This Week 🔥</h2>
+          <div className="trending">
+            <div className="movies-trending">
+              {trendingWeek.map((movie) => (
                 <div key={movie.id} className="movie">
                   {movie.poster_path && (
                     <img
@@ -160,7 +178,7 @@ function App() {
       {/* Se houver filmes buscados, exibe os 10 primeiros e faz um sort*/}
       <div className="movies">
         {sortMovies(movies)
-          .slice(0, 10)
+          .slice(0, 5)
           .map((movie) => (
             <div key={movie.id} className="movie">
               {movie.poster_path && (
