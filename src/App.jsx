@@ -10,20 +10,23 @@ function App() {
   const [loading, setLoading] = useState(false); // Estado para indicar carregamento
   const [expandedMovieId, setExpandedMovieId] = useState(null); // ID do filme expandido (detalhes visíveis)
 
-  const [trending, setTrending] = useState([]); // Armazena os filmes em alta (trending)
+  const [trendingDay, setTrendingDay] = useState([]); // Armazena os filmes em alta (trending)
+  const [trendingWeek, setTrendingWeek] = useState([]); // Armazena os filmes em alta (trending)
 
   // Hook para buscar os filmes em alta assim que o componente for montado (pagina carregar)
   useEffect(() => {
     const fetchTrendingMovies = async () => {
-      const response = await fetch(`${BASE_URL}/trending/movie/week`, {
+      const dayResponse = await fetch(`${BASE_URL}/trending/movie/day`, {
         headers: {
           Authorization: `Bearer ${TMDB_API_KEY}`,
           accept: "application/json",
         },
       });
-      const data = await response.json();
-      setTrending(data.results.slice(0, 5)); // pega os top 5 trending
+      const dayData = await dayResponse.json();
+      setTrendingDay(dayData.results.slice(0, 20)); // pega os top 20 trending DO DIA
     };
+    
+
 
     fetchTrendingMovies(); // Chama a função ao montar o componente
   }, []);
@@ -62,26 +65,31 @@ function App() {
 //testando
   return (
     <div className="app">
-      <h1>TMDB Movie Search</h1>
+      <h1>TMDB Movie Search 🔎</h1>
 
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search for movies..."
-        />
-        <button type="submit" disabled={loading}>
-          {loading ? "Searching..." : "Search"}
-        </button>
-      </form>
+      <div className="form-container">
+        <form onSubmit={handleSubmit} className = "form">
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search for movies..."
+            className="search-place"
+          />
+          <button type="submit" disabled={loading} className="search-button">
+            {loading ? "Searching..." : "Search"}
+          </button>
+        </form>
+      </div>
 
       {/* Se ainda não houve uma busca (lista de filmes está vazia), mostra os trending */}
       {movies.length === 0 && (
         <>
-          <h2>🔥 Trending This Week</h2>
+
+          <h2>🔥 Trending Today 🔥</h2>
+          <div className="trending">
           <div className="movies">
-            {trending.map((movie) => (
+            {trendingDay.map((movie) => (
               <div key={movie.id} className="movie">
                 {movie.poster_path && (
                   <img
@@ -95,11 +103,15 @@ function App() {
               </div>
             ))}
           </div>
+          </div>
+
+
+
         </>
       )}
             {/* Se houver filmes buscados, exibe os 3 primeiros */}
       <div className="movies">
-        {movies.slice(0, 3).map((movie) => (
+        {movies.slice(0, 30).map((movie) => (
           <div key={movie.id} className="movie">
             {movie.poster_path && (
               <img
