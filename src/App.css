@@ -36,16 +36,13 @@ body{
 
 .form {
   display: flex;
-  gap: 30px;
+  gap: 10px;
   width: 100%;
-  max-width: 400px; 
+  max-width: 500px; 
 }
 
 
-.form {
-  display: flex;
-  gap: 10px; 
-}
+
 
 .search-place {
   flex: 1;
@@ -85,11 +82,12 @@ body{
   cursor: not-allowed;
 }
 
-.movies {
+.movies-trending {
   display: flex;
   gap: 20px;
   overflow-x: auto;
-  padding: 20px;
+  align-items: flex-start;
+  padding: 10px;
   scrollbar-width: none;
 }
 
@@ -148,9 +146,8 @@ body{
 .movie-details {
   padding: 10px;
   background: #2a2a2a;
-  margin-top: 10px;
   font-size: 14px;
-}
+  text-align: justify;}
 
 
 .details-button{
@@ -168,16 +165,26 @@ body{
   color: rgba(193, 187, 236, 0.982);
 }
 
-/*
-.trending {
+.sort-container{
+  display: flex;
+  justify-content: center; 
+  align-items: flex-start; 
+  gap: 10px;
+}
+
+.sort-select{
+  padding: 4px 10px;
+  font-size: 14px;
+  background-color: rgba(193, 187, 236, 0.782); 
+  color: #1d1c28;
+  border: none;
+  border-radius: 5px;
+}
+
+.movies {
   display: flex;
   gap: 20px;
-  padding: 20px 0;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory; 
-  scroll-behavior: smooth; 
-  -webkit-overflow-scrolling: touch;
-  scroll-snap-align: start; 
-  flex: 0 0 auto; 
+  align-items: flex-start;
+  justify-content: center;
+  padding: 70px 70px;
 }
-*/
