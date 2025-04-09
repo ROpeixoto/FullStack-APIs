@@ -1,9 +1,14 @@
 import { useState, useEffect } from "react";
+import FormSearch from "./components/FormSearch";
+import TrendingType from "./components/TrendingType";
+import Sorting from "./components/Sorting";
+
+
 import "./App.css";
 
 function App() {
-  const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY; //trazendo a chave que esta no arquivo .env
-  const WATCHMODE_API_KEY = import.meta.env.VITE_WATCHMODE_API_KEY;
+  const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY; //trazendo a chave do TMDB que esta no arquivo .env
+  const WATCHMODE_API_KEY = import.meta.env.VITE_WATCHMODE_API_KEY; // trazendo a chave do watchmode também
   const BASE_URL = "https://api.themoviedb.org/3"; // URL base da API
 
   const [query, setQuery] = useState(""); // para guardar a consulta de busca do usuário
@@ -14,9 +19,9 @@ function App() {
   const [trendingDay, setTrendingDay] = useState([]); // Armazena os filmes em alta DIA (trending)
   const [trendingWeek, setTrendingWeek] = useState([]); // Armazena os filmes em alta SEMANA (trending)
 
-  const [sortOption, setSortOption] = useState("popularity"); //opção que o usuário escolhe do Order By, já setado em popularidade(Filmes mais famosos)
+  const [sortOption, setSortOption] = useState("popularity"); //opção que o usuário escolhe do Order By, já setado em popularidade(Filmes mais populosos)
 
-  const [watchProviders, setWatchProviders] = useState({});
+  const [watchSource, setWatchSource] = useState({}); //para guardar os sources dos filmes
 
   // Hook para buscar os filmes em alta assim que o componente for montado (pagina carregar)
   useEffect(() => {
@@ -66,10 +71,10 @@ function App() {
         },
       }
     );
-    const moviesData = await response.json(); // Converte a resposta em JSON
-    setMovies(moviesData.results); // Atualiza os filmes buscados
-    setLoading(false); // Finaliza o carregamento
-    setExpandedMovieId(null); // Reseta o view expandido (detalhes)
+    const moviesData = await response.json(); // converte a resposta em JSON
+    setMovies(moviesData.results); // atualiza os filmes buscados
+    setLoading(false); // finaliza o carregamento
+    setExpandedMovieId(null); // reseta o view expandido (detalhes)
   };
 
   // Função executada ao enviar o formulário de busca(clicar no botao)
@@ -101,29 +106,25 @@ function App() {
   };
   //função para perguntar a API WatchMode (onde assistir) usando o id do tmdb
   const fetchWhereToWatch = async (tmdbId) => {
-    //try para verificar se existe algum erro
+    const response = await fetch(
+      `https://api.watchmode.com/v1/title/movie-${tmdbId}/details/?apiKey=${WATCHMODE_API_KEY}&append_to_response=sources`
+    );
+    const data = await response.json();
 
-      const response = await fetch(
-        `https://api.watchmode.com/v1/title/movie-${tmdbId}/details/?apiKey=${WATCHMODE_API_KEY}&append_to_response=sources`
-      );
-      const data = await response.json();
+    const sources = data.sources;
 
-      const sources = data.sources;
+    const providers = sources.map((s) => ({
+      name: s.name,
+      url: s.web_url,
+    }));
 
-      const providers = sources.map((s) => ({
-        name: s.name,
-        url: s.web_url,
-      }));
-
-      return providers;
-
+    return providers;
   };
 
-
   const toggleMovieDetails = async (movieId) => {
-    if (expandedMovieId !== movieId && !watchProviders[movieId]) {
+    if (expandedMovieId !== movieId && !watchSource[movieId]) {
       const providers = await fetchWhereToWatch(movieId);
-      setWatchProviders((prev) => ({
+      setWatchSource((prev) => ({
         ...prev,
         [movieId]: providers,
       }));
@@ -136,77 +137,31 @@ function App() {
     <div className="app">
       <h1>Movie Search 🔎</h1>
       <div className="form-container">
-        <form onSubmit={handleSubmit} className="form">
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search for movies..."
-            className="search-place"
-          />
-          <button type="submit" disabled={loading} className="search-button">
-            {loading ? "Searching..." : "Search"}
-          </button>
-        </form>
+        <FormSearch
+          query={query}
+          setQuery={setQuery}
+          handleSubmit={handleSubmit}
+          loading={loading}
+        />
       </div>
       {/* Input para colocar a ordem que o usuário deseja para os filmes */}
       {movies.length > 0 && (
-        <div className="sort-container">
-          <label>Order by:</label>
-          <select
-            id="sort"
-            value={sortOption}
-            onChange={(e) => setSortOption(e.target.value)}
-            className="sort-select"
-          >
-            <option value="popularity">Popularity</option>
-            <option value="rating">Rating</option>
-            <option value="release_desc">Newest</option>
-            <option value="release_asc">Oldest</option>
-          </select>
-        </div>
+        <Sorting 
+        sortOption={sortOption} 
+        setSortOption={setSortOption} 
+        />
       )}
 
       {/* Se ainda não houve uma busca (lista de filmes está vazia), mostra os trending da semana e do dia */}
       {movies.length === 0 && (
         <>
-          <h2>🔥 Trending Today 🔥</h2>
-          <div className="trending">
-            <div className="movies-trending">
-              {trendingDay.map((movie) => (
-                <div key={movie.id} className="movie">
-                  {movie.poster_path && (
-                    <img
-                      src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
-                      alt={movie.title}
-                    />
-                  )}
-                  <h3>{movie.title}</h3>
-                  <p>{movie.release_date}</p>
-                  <p>Rating: {movie.vote_average} / 10</p>
-                </div>
-              ))}
-            </div>
-          </div>
-          <h2>🔥 Trending This Week 🔥</h2>
-          <div className="trending">
-            <div className="movies-trending">
-              {trendingWeek.map((movie) => (
-                <div key={movie.id} className="movie">
-                  {movie.poster_path && (
-                    <img
-                      src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
-                      alt={movie.title}
-                    />
-                  )}
-                  <h3>{movie.title}</h3>
-                  <p>{movie.release_date}</p>
-                  <p>Rating: {movie.vote_average} / 10</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </>
+        <TrendingType 
+        title="🔥 Trending Today 🔥" 
+        movies={trendingDay} />
+        <TrendingType 
+        title="🔥 Trending This Week 🔥" 
+        movies={trendingWeek} />
+      </>
       )}
       {/* Se houver filmes buscados, exibe os 10 primeiros e faz um sort (padrão de popularidade)*/}
       <div className="movies">
@@ -248,18 +203,13 @@ function App() {
                     <strong>Vote Count:</strong> {movie.vote_count}
                   </p>
                   {/* Parte dentro do view que contém as informações de onde assistir*/}
-                  {watchProviders[movie.id] && (
+                  {watchSource[movie.id] && (
                     <p>
                       <strong>Available on:</strong>{" "}
-                      {watchProviders[movie.id].map((provider, index) => (
+                      {watchSource[movie.id].map((provider, index) => (
                         <span key={index}>
                           {", "}
-                          <a
-                            href={provider.url}
-                          >
-                            {provider.name}
-                          </a>
-                        
+                          <a href={provider.url}>{provider.name}</a>
                         </span>
                       ))}
                     </p>
