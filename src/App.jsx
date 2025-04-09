@@ -11,6 +11,8 @@ function App() {
   const WATCHMODE_API_KEY = import.meta.env.VITE_WATCHMODE_API_KEY; // trazendo a chave do watchmode também
   const BASE_URL = "https://api.themoviedb.org/3"; // URL base da API
 
+  console.log("WATCHMODE API KEY:", WATCHMODE_API_KEY);
+
   const [query, setQuery] = useState(""); // para guardar a consulta de busca do usuário
   const [movies, setMovies] = useState([]); // filmes retornados pela busca
   const [loading, setLoading] = useState(false); // Estado para indicar carregamento
