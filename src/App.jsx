@@ -16,6 +16,8 @@ function App() {
 
   const [sortOption, setSortOption] = useState("popularity"); //opção que o usuário escolhe do Order By, já setado em popularidade(Filmes mais famosos)
 
+  const [watchProviders, setWatchProviders] = useState({});
+
   // Hook para buscar os filmes em alta assim que o componente for montado (pagina carregar)
   useEffect(() => {
     const TrendingMoviesDay = async () => {
@@ -26,12 +28,12 @@ function App() {
         },
       });
       const dayData = await dayResponse.json();
-      setTrendingDay(dayData.results.slice(0, 20)); // pega os top 20 trending DO DIA
+      setTrendingDay(dayData.results.slice(0, 10)); // pega os top 10 trending DO DIA
     };
 
     TrendingMoviesDay(); // Chama a função ao montar o componente
   }, []);
-  
+
   //Mesma função, porem para puxar os trendings da semanaa
   useEffect(() => {
     const TrendingMoviesWeek = async () => {
@@ -42,7 +44,7 @@ function App() {
         },
       });
       const weekData = await dayResponse.json();
-      setTrendingWeek(weekData.results.slice(0, 20)); // pega os top 20 trending da SEMANA
+      setTrendingWeek(weekData.results.slice(0, 10)); // pega os top 10 trending da SEMANA
     };
 
     TrendingMoviesWeek(); // Chama a função ao montar o componente
@@ -75,10 +77,10 @@ function App() {
     e.preventDefault();
     searchMovies();
   };
-  // Alterna exibição de detalhes do filme (mostrar/ocultar) no botao de view
-  const toggleMovieDetails = (movieId) => {
-    setExpandedMovieId(expandedMovieId === movieId ? null : movieId);
-  };
+  // // Alterna exibição de detalhes do filme (mostrar/ocultar) no botao de view (Deixa essa assim em espera, para ver se vou usar dnv)
+  // const toggleMovieDetails = (movieId) => {
+  //   setExpandedMovieId(expandedMovieId === movieId ? null : movieId);
+  // };
 
   //função para fazer o sort da lista dos filmes
   const sortMovies = (moviess) => {
@@ -97,7 +99,38 @@ function App() {
       }
     });
   };
-  
+  //função para perguntar a API WatchMode (onde assistir) usando o id do tmdb
+  const fetchWhereToWatch = async (tmdbId) => {
+    //try para verificar se existe algum erro
+
+      const response = await fetch(
+        `https://api.watchmode.com/v1/title/movie-${tmdbId}/details/?apiKey=${WATCHMODE_API_KEY}&append_to_response=sources`
+      );
+      const data = await response.json();
+
+      const sources = data.sources;
+
+      const providers = sources.map((s) => ({
+        name: s.name,
+        url: s.web_url,
+      }));
+
+      return providers;
+
+  };
+
+
+  const toggleMovieDetails = async (movieId) => {
+    if (expandedMovieId !== movieId && !watchProviders[movieId]) {
+      const providers = await fetchWhereToWatch(movieId);
+      setWatchProviders((prev) => ({
+        ...prev,
+        [movieId]: providers,
+      }));
+    }
+
+    setExpandedMovieId(expandedMovieId === movieId ? null : movieId);
+  };
 
   return (
     <div className="app">
@@ -134,7 +167,7 @@ function App() {
         </div>
       )}
 
-      {/* Se ainda não houve uma busca (lista de filmes está vazia), mostra os trending */}
+      {/* Se ainda não houve uma busca (lista de filmes está vazia), mostra os trending da semana e do dia */}
       {movies.length === 0 && (
         <>
           <h2>🔥 Trending Today 🔥</h2>
@@ -175,7 +208,7 @@ function App() {
           </div>
         </>
       )}
-      {/* Se houver filmes buscados, exibe os 10 primeiros e faz um sort*/}
+      {/* Se houver filmes buscados, exibe os 10 primeiros e faz um sort (padrão de popularidade)*/}
       <div className="movies">
         {sortMovies(movies)
           .slice(0, 5)
@@ -191,6 +224,7 @@ function App() {
               <p>{movie.release_date}</p>
               <p>Rating: {movie.vote_average} / 10</p>
 
+              {/* Botão Toggle para expandir a visualização do filme*/}
               <button
                 onClick={() => toggleMovieDetails(movie.id)}
                 className="details-button"
@@ -213,6 +247,23 @@ function App() {
                   <p>
                     <strong>Vote Count:</strong> {movie.vote_count}
                   </p>
+                  {/* Parte dentro do view que contém as informações de onde assistir*/}
+                  {watchProviders[movie.id] && (
+                    <p>
+                      <strong>Available on:</strong>{" "}
+                      {watchProviders[movie.id].map((provider, index) => (
+                        <span key={index}>
+                          {", "}
+                          <a
+                            href={provider.url}
+                          >
+                            {provider.name}
+                          </a>
+                        
+                        </span>
+                      ))}
+                    </p>
+                  )}
                 </div>
               )}
             </div>
