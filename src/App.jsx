@@ -31,8 +31,8 @@ function App() {
 
     TrendingMoviesDay(); // Chama a função ao montar o componente
   }, []);
-
-  //Mesma função, porem para puxar os trendings da semana
+  
+  //Mesma função, porem para puxar os trendings da semanaa
   useEffect(() => {
     const TrendingMoviesWeek = async () => {
       const dayResponse = await fetch(`${BASE_URL}/trending/movie/week`, {
