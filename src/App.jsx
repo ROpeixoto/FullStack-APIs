@@ -22,6 +22,26 @@ function Home({TMDB_API_KEY,WATCHMODE_API_KEY, BASE_URL}){
 
   const [watchSource, setWatchSource] = useState({}); //para guardar os sources dos filmes
   // Hook para buscar os filmes em alta assim que o componente for montado (pagina carregar)
+  
+  const [dayIndex, setDayIndex] = useState(0);
+  const [weekIndex, setWeekIndex] = useState(0);
+
+  const nextDay = () => {
+    setDayIndex((prev) => Math.min(prev + 1, trendingDay.length - 5)); // Limita ao máximo possível
+  };
+  
+  const prevDay = () => {
+    setDayIndex((prev) => Math.max(prev - 1, 0)); // Limita ao mínimo
+  };
+  
+  const nextWeek = () => {
+    setWeekIndex((prev) => Math.min(prev + 1, trendingWeek.length - 5)); // Limita ao máximo possível
+  };
+  
+  const prevWeek = () => {
+    setWeekIndex((prev) => Math.max(prev - 1, 0)); // Limita ao mínimo
+  };
+  
   useEffect(() => {
     const TrendingMoviesDay = async () => {
       const dayResponse = await fetch(`${BASE_URL}/trending/movie/day`, {
@@ -162,17 +182,76 @@ function Home({TMDB_API_KEY,WATCHMODE_API_KEY, BASE_URL}){
         />
       )}
 
-      {/* Se ainda não houve uma busca (lista de filmes está vazia), mostra os trending da semana e do dia */}
-      {movies.length === 0 && (
-        <>
-        <TrendingType 
-        title="🔥 Trending Today 🔥" 
-        movies={trendingDay} />
-        <TrendingType 
-        title="🔥 Trending This Week 🔥" 
-        movies={trendingWeek} />
-      </>
-      )}
+{/* Se ainda não houve uma busca (lista de filmes está vazia), mostra os trending da semana e do dia */}
+{movies.length === 0 && (
+  <>
+    <div className="trending-section">
+      <h2>🔥 Trending Today 🔥</h2>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <button
+          onClick={prevDay}
+          disabled={dayIndex === 0}
+          style={{ color: 'white', fontSize: '24px', background: 'transparent', border: 'none' }}
+        >
+          &larr;
+        </button>
+        <div style={{ display: 'flex', overflow: 'hidden', justifyContent: 'center', width: '80%' }}>
+          {trendingDay.slice(dayIndex, dayIndex + 5).map((movie) => (
+            <div key={movie.id} style={{ flex: '0 0 auto', margin: '0 10px' }}>
+              <img
+                src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
+                alt={movie.title}
+                style={{ width: '100%' }}
+              />
+              <h3 style={{ textAlign: 'center' }}>{movie.title}</h3>
+            </div>
+          ))}
+        </div>
+        <button
+          onClick={nextDay}
+          disabled={dayIndex >= trendingDay.length - 5}
+          style={{ color: 'white', fontSize: '24px', background: 'transparent', border: 'none' }}
+        >
+          &rarr;
+        </button>
+      </div>
+    </div>
+
+    <div className="trending-section">
+      <h2>🔥 Trending This Week 🔥</h2>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <button
+          onClick={prevWeek}
+          disabled={weekIndex === 0}
+          style={{ color: 'white', fontSize: '24px', background: 'transparent', border: 'none' }}
+        >
+          &larr;
+        </button>
+        <div style={{ display: 'flex', overflow: 'hidden', justifyContent: 'center', width: '80%' }}>
+          {trendingWeek.slice(weekIndex, weekIndex + 5).map((movie) => (
+            <div key={movie.id} style={{ flex: '0 0 auto', margin: '0 10px' }}>
+              <img
+                src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
+                alt={movie.title}
+                style={{ width: '100%' }}
+              />
+              <h3 style={{ textAlign: 'center' }}>{movie.title}</h3>
+            </div>
+          ))}
+        </div>
+        <button
+          onClick={nextWeek}
+          disabled={weekIndex >= trendingWeek.length - 5}
+          style={{ color: 'white', fontSize: '24px', background: 'transparent', border: 'none' }}
+        >
+          &rarr;
+        </button>
+      </div>
+    </div>
+  </>
+)}
+
+
       {/* Se houver filmes buscados, exibe os 10 primeiros e faz um sort (padrão de popularidade)*/}
       <div className="movies">
         {sortMovies(movies)

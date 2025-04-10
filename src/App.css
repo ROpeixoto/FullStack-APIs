@@ -13,7 +13,21 @@
   color: #888;
 }
 
+.trending-section {
+  margin: 20px 0;
+}
 
+button {
+  background-color: transparent;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
 
 
 
