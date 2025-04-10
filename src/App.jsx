@@ -201,9 +201,6 @@ function Home({ TMDB_API_KEY, WATCHMODE_API_KEY, TMDB_URL }) {
                     <strong>Original Language:</strong>{" "}
                     {movie.original_language}
                   </p>
-                  <p>
-                    <strong>Vote Count:</strong> {movie.vote_count}
-                  </p>
                   {/* Parte dentro do view que contém as informações de onde assistir*/}
                   {watchSource[movie.id] && (
                     <p>
