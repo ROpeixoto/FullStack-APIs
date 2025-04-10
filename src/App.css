@@ -77,11 +77,6 @@ body{
   color: rgba(193, 187, 236, 0.982);
 }
 
-.search-button:disabled {
-  background-color: #3700b3; 
-  cursor: not-allowed;
-}
-
 .movies-trending {
   display: flex;
   gap: 20px;
@@ -147,7 +142,9 @@ body{
   padding: 10px;
   background: #2a2a2a;
   font-size: 14px;
-  text-align: justify;}
+  text-align: justify;
+  
+}
 
 
 .details-button{
@@ -187,4 +184,77 @@ body{
   align-items: flex-start;
   justify-content: center;
   padding: 70px 70px;
+}
+
+.main-nav {
+  margin-bottom: 20px;
+}
+
+.main-nav a {
+  margin-right: 15px;
+  text-decoration: none;
+  color: #1d1c28;
+  font-weight: bold;
+  background: rgba(193, 187, 236, 0.982);
+  border-radius: 8px;
+  padding: 5px 15px; 
+
+}
+
+.main-nav a:hover {
+  color: #6200ee;
+}
+
+.page-content {
+ 
+  display: flex;
+  flex-direction: column;
+  background: #232231; 
+  border-radius: 8px;
+  overflow: hidden; 
+  box-shadow: 8px 8px 8px 8px rgba(97, 95, 95, 0.2);
+  transition: transform 0.3s;
+}
+
+.main-nav .active-link {
+  color: #6200ee;
+  border-bottom: 2px solid #6200ee;
+  padding-bottom: 2px;
+}
+
+
+
+.repo-link {
+  display: inline-block;
+  margin-top: 0.5rem;
+  color: #6200ee;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.repo-link:hover{
+  color: #7e31ea;
+}
+
+.closing-statement {
+  font-style: italic;
+  color: #555;
+  border-left: 3px solid #6200ee;
+  padding-left: 1rem;
+  margin-top: 2rem;
+}
+
+.page-content ul {
+  padding-left: 1rem; 
+  list-style-position: inside; 
+  text-align: center; 
+  display: inline-block; 
+  margin: 0 auto; 
+  width: fit-content;
+}
+
+.page-content li {
+  text-align: left; 
+  margin-left: -1rem; 
 }

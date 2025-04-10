@@ -2,14 +2,13 @@ import { useState, useEffect } from "react";
 import FormSearch from "./components/FormSearch";
 import TrendingType from "./components/TrendingType";
 import Sorting from "./components/Sorting";
-
-
 import "./App.css";
+import Navigation from "./components/Navigation";
+import About from "./components/About";
+import Team from "./components/Team";
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-function App() {
-  const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY; //trazendo a chave do TMDB que esta no arquivo .env
-  const WATCHMODE_API_KEY = import.meta.env.VITE_WATCHMODE_API_KEY; // trazendo a chave do watchmode também
-  const BASE_URL = "https://api.themoviedb.org/3"; // URL base da API
+function Home({TMDB_API_KEY,WATCHMODE_API_KEY, BASE_URL}){
 
   const [query, setQuery] = useState(""); // para guardar a consulta de busca do usuário
   const [movies, setMovies] = useState([]); // filmes retornados pela busca
@@ -22,7 +21,6 @@ function App() {
   const [sortOption, setSortOption] = useState("popularity"); //opção que o usuário escolhe do Order By, já setado em popularidade(Filmes mais populosos)
 
   const [watchSource, setWatchSource] = useState({}); //para guardar os sources dos filmes
-
   // Hook para buscar os filmes em alta assim que o componente for montado (pagina carregar)
   useEffect(() => {
     const TrendingMoviesDay = async () => {
@@ -105,21 +103,35 @@ function App() {
     });
   };
   //função para perguntar a API WatchMode (onde assistir) usando o id do tmdb
-  const fetchWhereToWatch = async (tmdbId) => {
-    const response = await fetch(
-      `https://api.watchmode.com/v1/title/movie-${tmdbId}/details/?apiKey=${WATCHMODE_API_KEY}&append_to_response=sources`
-    );
-    const data = await response.json();
-
-    const sources = data.sources;
-
-    const providers = sources.map((s) => ({
-      name: s.name,
-      url: s.web_url,
-    }));
-
-    return providers;
-  };
+    //função para perguntar a API WatchMode (onde assistir) usando o id do tmdb
+    const fetchWhereToWatch = async (tmdbId) => {
+      const response = await fetch(
+        `https://api.watchmode.com/v1/title/movie-${tmdbId}/details/?apiKey=${WATCHMODE_API_KEY}&append_to_response=sources`
+      );
+      const data = await response.json();
+    //se sources n existe, agrega uma lista vazia
+      const sources = data.sources || [];
+    //providers será a lista com os nomes unicos
+      const providers = [];
+      //usando um set pois tem a função Has que é mais rápida para muitos dados
+      const seenNames = new Set();
+    //percorre por todos os sources retornados pela watchmode
+      for (const s of sources) {
+        //se o nome ele nao existe no Set que criamos, nos adicionamos ao array providers
+        if (!seenNames.has(s.name)) {
+          //adicionando ao providers o nome e o url
+          providers.push({
+            name: s.name,
+            url: s.web_url,
+          });
+          //adicionando também ao Set o nome que temos, para evitar que haja duplicatas
+          seenNames.add(s.name);
+        }
+        //a lógica do Set foi feita pq o watchmode estava retornando muitos links duplicados, estava imprimindo muitos links no view more
+      }
+    
+      return providers;
+    };
 
   const toggleMovieDetails = async (movieId) => {
     if (expandedMovieId !== movieId && !watchSource[movieId]) {
@@ -132,10 +144,8 @@ function App() {
 
     setExpandedMovieId(expandedMovieId === movieId ? null : movieId);
   };
-
   return (
     <div className="app">
-      <h1>Movie Search 🔎</h1>
       <div className="form-container">
         <FormSearch
           query={query}
@@ -208,8 +218,8 @@ function App() {
                       <strong>Available on:</strong>{" "}
                       {watchSource[movie.id].map((provider, index) => (
                         <span key={index}>
-                          {", "}
-                          <a href={provider.url}>{provider.name}</a>
+                          {index > 0 && ", "}
+                          <a href={provider.url} className="repo-link">{provider.name}</a>
                         </span>
                       ))}
                     </p>
@@ -220,6 +230,35 @@ function App() {
           ))}
       </div>
     </div>
+  );
+
+}
+
+function App() {
+  const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY; //trazendo a chave do TMDB que esta no arquivo .env
+  const WATCHMODE_API_KEY = import.meta.env.VITE_WATCHMODE_API_KEY; // trazendo a chave do watchmode também
+  const BASE_URL = "https://api.themoviedb.org/3"; // URL base da API
+
+  return (
+    <Router>
+      <div className="app">
+        <h1>Movie Search 🔎</h1>
+        <Navigation />
+        
+        <Routes>
+          <Route 
+            path="/" 
+            element={<Home 
+              TMDB_API_KEY={TMDB_API_KEY} 
+              WATCHMODE_API_KEY={WATCHMODE_API_KEY}
+              BASE_URL = {BASE_URL}
+            />} 
+          />
+          <Route path="/about" element={<About />} />
+          <Route path="/team" element={<Team />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
