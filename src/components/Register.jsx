@@ -1,17 +1,27 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import "./Auth.css";
 
-export default function Register({ setIsAuthenticated }) {
+export default function Register({ setIsAuthenticated, setUserName }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
-    // Aqui você pode adicionar lógica de cadastro real se quiser
-    setIsAuthenticated(true);
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}users/register`,
+        { name, email, password }
+      );
+      setIsAuthenticated(true);
+      setUserName(name); // já tem o nome aqui
+      navigate("/");
+    } catch (error) {
+      alert("Erro ao cadastrar: " + (error.response?.data?.message || error.message));
+    }
   };
 
   return (

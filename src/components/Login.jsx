@@ -1,16 +1,26 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import "./Auth.css";
 
-export default function Login({ setIsAuthenticated }) {
+export default function Login({ setIsAuthenticated, setUserName }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // Aqui você pode adicionar autenticação real se quiser
-    setIsAuthenticated(true);
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}users/login`,
+        { email, password }
+      );
+      setIsAuthenticated(true);
+      setUserName(response.data.name); // pega o nome do backend
+      navigate("/"); // Redireciona para Home
+    } catch (error) {
+      alert("Login inválido: " + (error.response?.data?.message || error.message));
+    }
   };
 
   return (

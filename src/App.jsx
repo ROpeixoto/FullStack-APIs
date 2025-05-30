@@ -8,7 +8,7 @@ import About from "./components/About";
 import Team from "./components/Team";
 import Login from "./components/Login";
 import Register from "./components/Register";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from "react-router-dom";
 
 function Home({ TMDB_API_KEY, WATCHMODE_API_KEY, TMDB_URL }) {
   const [query, setQuery] = useState(""); // para guardar a consulta de busca do usuário
@@ -186,7 +186,7 @@ function Home({ TMDB_API_KEY, WATCHMODE_API_KEY, TMDB_URL }) {
                 onClick={() => toggleMovieDetails(movie.id)}
                 className="details-button"
               >
-                {/*Basicamente o label do botão, caso o id clicado seja igual o id do filme
+                {/*Basicamente o label do botão, caso o id clicado seja igual um id do filme
                  mostra um hide details, e caso contrario, mostra um view details*/}
                 {expandedMovieId === movie.id ? "Hide Details" : "View Details"}
               </button>
