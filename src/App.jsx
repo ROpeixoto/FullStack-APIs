@@ -6,6 +6,8 @@ import "./App.css";
 import Navigation from "./components/Navigation";
 import About from "./components/About";
 import Team from "./components/Team";
+import Login from "./components/Login";
+import Register from "./components/Register";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 function Home({ TMDB_API_KEY, WATCHMODE_API_KEY, TMDB_URL }) {
@@ -225,29 +227,47 @@ function Home({ TMDB_API_KEY, WATCHMODE_API_KEY, TMDB_URL }) {
 }
 
 function App() {
-  const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY; //trazendo a chave do TMDB que esta no arquivo .env
-  const WATCHMODE_API_KEY = import.meta.env.VITE_WATCHMODE_API_KEY; // trazendo a chave do watchmode também
-  const TMDB_URL = "https://api.themoviedb.org/3"; // URL base da API
+  const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY;
+  const WATCHMODE_API_KEY = import.meta.env.VITE_WATCHMODE_API_KEY;
+  const TMDB_URL = "https://api.themoviedb.org/3";
+
+  // Estado para saber se o usuário está autenticado
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   return (
     <Router>
       <div className="app">
         <h1>Movie Search 🔎</h1>
-        <Navigation />
-
+        {/* Só mostra a navegação se estiver autenticado */}
+        {isAuthenticated && <Navigation />}
         <Routes>
-          <Route
-            path="/"
-            element={
-              <Home
-                TMDB_API_KEY={TMDB_API_KEY}
-                WATCHMODE_API_KEY={WATCHMODE_API_KEY}
-                TMDB_URL={TMDB_URL}
+          {!isAuthenticated ? (
+            <>
+              <Route
+                path="/"
+                element={<Login setIsAuthenticated={setIsAuthenticated} />}
               />
-            }
-          />
-          <Route path="/about" element={<About />} />
-          <Route path="/team" element={<Team />} />
+              <Route
+                path="/register"
+                element={<Register setIsAuthenticated={setIsAuthenticated} />}
+              />
+            </>
+          ) : (
+            <>
+              <Route
+                path="/"
+                element={
+                  <Home
+                    TMDB_API_KEY={TMDB_API_KEY}
+                    WATCHMODE_API_KEY={WATCHMODE_API_KEY}
+                    TMDB_URL={TMDB_URL}
+                  />
+                }
+              />
+              <Route path="/about" element={<About />} />
+              <Route path="/team" element={<Team />} />
+            </>
+          )}
         </Routes>
       </div>
     </Router>
