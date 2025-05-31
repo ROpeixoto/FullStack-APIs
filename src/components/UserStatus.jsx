@@ -1,10 +1,11 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const UserStatus = ({ isAuthenticated, userName, setIsAuthenticated, setUserName }) => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLoginClick = () => {
-    navigate('/');
+    navigate('/login');
   };
 
   const handleLogout = () => {
@@ -13,15 +14,20 @@ const UserStatus = ({ isAuthenticated, userName, setIsAuthenticated, setUserName
     navigate('/');
   };
 
+  // Esconde o botão de login nas páginas de login e registro
+  const isAuthPage = location.pathname === "/login" || location.pathname === "/register";
+
   return (
     <div className="user-status">
-      {isAuthenticated ? (
+      {isAuthenticated && userName ? (
         <div className="user-profile">
-          <span className="user-name">{userName}</span>
+          <span className="user-name">👤 {userName}</span>
           <button onClick={handleLogout} className="logout-button">Logout</button>
         </div>
       ) : (
-        <button onClick={handleLoginClick} className="login-button">Login</button>
+        !isAuthPage && (
+          <button onClick={handleLoginClick} className="login-button">Login</button>
+        )
       )}
     </div>
   );

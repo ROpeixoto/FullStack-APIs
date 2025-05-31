@@ -16,8 +16,8 @@ export default function Login({ setIsAuthenticated, setUserName }) {
         { email, password }
       );
       setIsAuthenticated(true);
-      setUserName(response.data.name); // pega o nome do backend
-      navigate("/"); // Redireciona para Home
+      setUserName(response.data.user.name); // <-- ajuste aqui!
+      navigate("/");
     } catch (error) {
       alert("Login inválido: " + (error.response?.data?.message || error.message));
     }
@@ -53,7 +53,11 @@ export default function Login({ setIsAuthenticated, setUserName }) {
           {" or "}
           <span
             className="auth-link"
-            onClick={() => setIsAuthenticated(true)}
+            onClick={() => {
+              setIsAuthenticated(false);   // Permite acessar a Home
+              setUserName("");            // Sem nome, mostra "Login" no topo
+              navigate("/");              // Redireciona para Home
+            }}
             style={{ textDecoration: "underline", cursor: "pointer" }}
           >
             go on without an account

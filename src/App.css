@@ -317,3 +317,30 @@ body{
 .logout-button:hover {
   background-color: rgba(97, 95, 95, 0.2);
 }
+
+.add-list-btn {
+  margin-top: 6px;
+  padding: 6px 14px;
+  border-radius: 5px;
+  background: #6200ee;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.add-list-options {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.add-list-option {
+  background: #fff;
+  color: #6200ee;
+  border: 1px solid #6200ee;
+  border-radius: 5px;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-weight: bold;
+}

@@ -8,13 +8,16 @@ import About from "./components/About";
 import Team from "./components/Team";
 import Login from "./components/Login";
 import Register from "./components/Register";
-import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from "react-router-dom";
+import UserStatus from "./components/UserStatus";
+import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate, Navigate } from "react-router-dom";
+import AddToListButton from "./components/AddToListButton";
+import MyMovies from "./components/MyMovies";
 
-function Home({ TMDB_API_KEY, WATCHMODE_API_KEY, TMDB_URL }) {
+function Home({ TMDB_API_KEY, WATCHMODE_API_KEY, TMDB_URL, isAuthenticated, wantToWatch, setWantToWatch, watched, setWatched, expandedMovieId, setExpandedMovieId }) {
+  const navigate = useNavigate();
   const [query, setQuery] = useState(""); // para guardar a consulta de busca do usuário
   const [movies, setMovies] = useState([]); // filmes retornados pela busca
   const [loading, setLoading] = useState(false); // Estado para indicar carregamento
-  const [expandedMovieId, setExpandedMovieId] = useState(null); // ID do filme expandido (detalhes visíveis)
 
   const [trendingDay, setTrendingDay] = useState([]); // Armazena os filmes em alta DIA (trending)
   const [trendingWeek, setTrendingWeek] = useState([]); // Armazena os filmes em alta SEMANA (trending)
@@ -22,7 +25,9 @@ function Home({ TMDB_API_KEY, WATCHMODE_API_KEY, TMDB_URL }) {
   const [sortOption, setSortOption] = useState("popularity"); //opção que o usuário escolhe do Order By, já setado em popularidade(Filmes mais populosos)
 
   const [watchSource, setWatchSource] = useState({}); //para guardar os sources dos filmes
-
+  //const [wantToWatch, setWantToWatch] = useState([]);
+  //const [watched, setWatched] = useState([]);
+ // const [expandedMovieId, setExpandedMovieId] = useState(null);
 
   useEffect(() => {   // Hook para buscar os filmes em alta assim que o componente for montado (pagina carregar)
     const TrendingMoviesDay = async () => {     //função de espera para puxar os dados dos trendings no tmdb
@@ -181,6 +186,14 @@ function Home({ TMDB_API_KEY, WATCHMODE_API_KEY, TMDB_URL }) {
               <p>{movie.release_date}</p>
               <p>Rating: {movie.vote_average} / 10</p>
 
+              {/* Botão Add to list */}
+              <AddToListButton
+                isAuthenticated={isAuthenticated}
+                navigate={navigate}
+                movie={movie}
+                addWantToWatch={(movie) => setWantToWatch((prev) => [...prev, movie])}
+                addWatched={(movie) => setWatched((prev) => [...prev, movie])}
+              />
               {/* Botão Toggle para expandir a visualização do filme*/}
               <button
                 onClick={() => toggleMovieDetails(movie.id)}
@@ -231,26 +244,41 @@ function App() {
   const WATCHMODE_API_KEY = import.meta.env.VITE_WATCHMODE_API_KEY;
   const TMDB_URL = "https://api.themoviedb.org/3";
 
-  // Estado para saber se o usuário está autenticado
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userName, setUserName] = useState("");
+  const [wantToWatch, setWantToWatch] = useState([]);
+  const [watched, setWatched] = useState([]);
+  const [expandedMovieId, setExpandedMovieId] = useState(null);
 
   return (
     <Router>
       <div className="app">
         <h1>Movie Search 🔎</h1>
-        {/* Só mostra a navegação se estiver autenticado */}
         {isAuthenticated && <Navigation />}
         <Routes>
           {!isAuthenticated ? (
             <>
               <Route
-                path="/"
-                element={<Login setIsAuthenticated={setIsAuthenticated} />}
+                path="/login"
+                element={
+                  <Login
+                    setIsAuthenticated={setIsAuthenticated}
+                    setUserName={setUserName}
+                  />
+                }
               />
               <Route
                 path="/register"
-                element={<Register setIsAuthenticated={setIsAuthenticated} />}
+                element={
+                  <Register
+                    setIsAuthenticated={setIsAuthenticated}
+                    setUserName={setUserName}
+                  />
+                }
               />
+              {/* Redireciona qualquer outra rota (inclusive /) para /login */}
+              <Route path="*" element={<Navigate to="/login" replace />} />
+              <Route path="/" element={<Navigate to="/login" replace />} />
             </>
           ) : (
             <>
@@ -261,14 +289,38 @@ function App() {
                     TMDB_API_KEY={TMDB_API_KEY}
                     WATCHMODE_API_KEY={WATCHMODE_API_KEY}
                     TMDB_URL={TMDB_URL}
+                    isAuthenticated={isAuthenticated}
+                    wantToWatch={wantToWatch}
+                    setWantToWatch={setWantToWatch}
+                    watched={watched}
+                    setWatched={setWatched}
+                    expandedMovieId={expandedMovieId}
+                    setExpandedMovieId={setExpandedMovieId}
                   />
                 }
               />
               <Route path="/about" element={<About />} />
               <Route path="/team" element={<Team />} />
+              <Route
+                path="/mymovies"
+                element={
+                  <MyMovies
+                    onToggleDetails={setExpandedMovieId}
+                    expandedMovieId={expandedMovieId}
+                    isAuthenticated={isAuthenticated}
+                  />
+                }
+              />
+              <Route path="*" element={<Navigate to="/" replace />} />
             </>
           )}
         </Routes>
+        <UserStatus
+          isAuthenticated={isAuthenticated}
+          userName={userName}
+          setIsAuthenticated={setIsAuthenticated}
+          setUserName={setUserName}
+        />
       </div>
     </Router>
   );
