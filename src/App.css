@@ -13,7 +13,21 @@
   color: #888;
 }
 
+.trending-section {
+  margin: 20px 0;
+}
 
+button {
+  background-color: transparent;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
 
 
 
@@ -257,4 +271,49 @@ body{
 .page-content li {
   text-align: left; 
   margin-left: -1rem; 
+}
+
+.user-status {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.login-button {
+  padding: 8px 16px;
+  background-color: #6200ee;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.login-button:hover {
+  background-color: #3700b3;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-name {
+  color: rgba(193, 187, 236, 0.782);
+  font-weight: bold;
+}
+
+.logout-button {
+  padding: 6px 12px;
+  background-color: transparent;
+  color: rgba(193, 187, 236, 0.782);
+  border: 1px solid rgba(193, 187, 236, 0.582);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.logout-button:hover {
+  background-color: rgba(97, 95, 95, 0.2);
 }
