@@ -1,0 +1,15 @@
+.my-movies-page h2 {
+  margin-top: 2rem;
+}
+.movies {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+.movie {
+  background: #23223a;
+  border-radius: 8px;
+  padding: 1rem;
+  width: 200px;
+}

@@ -22,6 +22,12 @@ const Navigation = () => {
       >
         Team
       </NavLink>
+      <NavLink 
+        to="/mymovies" 
+        className={({ isActive }) => isActive ? "active-link" : ""}
+      >
+        My Movies
+      </NavLink>
     </nav>
   );
 };
