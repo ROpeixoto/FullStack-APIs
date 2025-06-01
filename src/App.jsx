@@ -276,12 +276,6 @@ function App() {
                   />
                 }
               />
-              {/* Redireciona qualquer outra rota (inclusive /) para /login */}
-              <Route path="*" element={<Navigate to="/login" replace />} />
-              <Route path="/" element={<Navigate to="/login" replace />} />
-            </>
-          ) : (
-            <>
               <Route
                 path="/"
                 element={
@@ -299,6 +293,11 @@ function App() {
                   />
                 }
               />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </>
+          ) : (
+            <>
+              
               <Route path="/about" element={<About />} />
               <Route path="/team" element={<Team />} />
               <Route

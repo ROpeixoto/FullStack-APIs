@@ -56,7 +56,7 @@ export default function Login({ setIsAuthenticated, setUserName }) {
             onClick={() => {
               setIsAuthenticated(false);   // Permite acessar a Home
               setUserName("");            // Sem nome, mostra "Login" no topo
-              navigate("/");              // Redireciona para Home
+              navigate("/", { state: { guestMode: true } });              // Redireciona para Home
             }}
             style={{ textDecoration: "underline", cursor: "pointer" }}
           >
