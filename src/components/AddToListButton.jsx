@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useState } from "react";
 
 export default function AddToListButton({ isAuthenticated, navigate, movie, refreshLists }) {
@@ -9,16 +8,45 @@ export default function AddToListButton({ isAuthenticated, navigate, movie, refr
   const handleSignIn = () => navigate("/login");
 
   const handleAddToList = async (listType) => {
-    try {
-      await axios.post(
-        `${import.meta.env.VITE_API_URL}user-movie-list`,
-        { movieId: movie.id, listType }
-      );
-      setShowOptions(false);
-      if (refreshLists) refreshLists(); // Atualiza listas no MyMovies
-    } catch (err) {
-      alert("Erro ao adicionar filme à lista!");
+    const token = localStorage.getItem('authToken'); // ou 'authToken', conforme seu login
+    if (!token) {
+      alert("Você precisa estar logado para adicionar filmes à lista.");
+      navigate("/login");
+      return;
     }
+
+    fetch(`${import.meta.env.VITE_API_URL}user-movie-list`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        movieId: movie.id,
+        listType
+      })
+    })
+      .then(res => {
+        if (res.status === 401) {
+          alert("Sua sessão expirou ou é inválida. Por favor, faça login novamente.");
+          localStorage.removeItem('token');
+          navigate("/login");
+          throw new Error("Unauthorized");
+        }
+        if (!res.ok) return res.json().then(data => { throw new Error(data.message || "Erro ao adicionar filme à lista."); });
+        return res.json();
+      })
+      .then(data => {
+        // Atualize sua UI conforme necessário
+        setShowOptions(false);
+        if (refreshLists) refreshLists();
+        // Opcional: console.log('Filme adicionado:', data);
+      })
+      .catch(err => {
+        if (err.message !== "Unauthorized") {
+          alert("Erro ao adicionar filme à lista: " + err.message);
+        }
+      });
   };
 
   return (
@@ -50,3 +78,4 @@ export default function AddToListButton({ isAuthenticated, navigate, movie, refr
     </div>
   );
 }
+

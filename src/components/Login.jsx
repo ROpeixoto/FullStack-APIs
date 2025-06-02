@@ -15,10 +15,17 @@ export default function Login({ setIsAuthenticated, setUserName }) {
         `${import.meta.env.VITE_API_URL}users/login`,
         { email, password }
       );
+      // --- INÍCIO DA ALTERAÇÃO ---
+      // Armazena o token no localStorage para uso futuro
+      localStorage.setItem('authToken', response.data.token);
+      // --- FIM DA ALTERAÇÃO ---
+
       setIsAuthenticated(true);
-      setUserName(response.data.user.name); // <-- ajuste aqui!
+      setUserName(response.data.user.name); // Mantém a atualização do nome do usuário
       navigate("/");
     } catch (error) {
+      // Limpa o token em caso de erro de login, caso exista algum antigo
+      localStorage.removeItem('authToken');
       alert("Login inválido: " + (error.response?.data?.message || error.message));
     }
   };
@@ -54,9 +61,11 @@ export default function Login({ setIsAuthenticated, setUserName }) {
           <span
             className="auth-link"
             onClick={() => {
-              setIsAuthenticated(false);   // Permite acessar a Home
-              setUserName("");            // Sem nome, mostra "Login" no topo
-              navigate("/");              // Redireciona para Home
+              // Limpa o token se o usuário decidir continuar sem conta
+              localStorage.removeItem('authToken'); 
+              setIsAuthenticated(false);   
+              setUserName("");            
+              navigate("/");              
             }}
             style={{ textDecoration: "underline", cursor: "pointer" }}
           >
@@ -67,3 +76,4 @@ export default function Login({ setIsAuthenticated, setUserName }) {
     </div>
   );
 }
+
