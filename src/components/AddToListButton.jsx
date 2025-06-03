@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function AddToListButton({ isAuthenticated, navigate, movie, refreshLists }) {
+export default function AddToListButton({ isAuthenticated, navigate, movieId}) {
   const [showOptions, setShowOptions] = useState(false);
 
   const handleAddClick = () => setShowOptions((prev) => !prev);
@@ -8,12 +8,19 @@ export default function AddToListButton({ isAuthenticated, navigate, movie, refr
   const handleSignIn = () => navigate("/login");
 
   const handleAddToList = async (listType) => {
-    const token = localStorage.getItem('authToken'); // ou 'authToken', conforme seu login
+    if (!movieId) {
+      alert("Informação do filme inválida.");
+      return;
+    }
+
+    const token = localStorage.getItem('authToken'); 
     if (!token) {
       alert("Você precisa estar logado para adicionar filmes à lista.");
       navigate("/login");
       return;
     }
+
+    console.log("movieId:", movieId, "listType:", listType);
 
     fetch(`${import.meta.env.VITE_API_URL}user-movie-list`, {
       method: 'POST',
@@ -22,8 +29,8 @@ export default function AddToListButton({ isAuthenticated, navigate, movie, refr
         'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify({
-        movieId: movie.id,
-        listType
+        movieId: movieId,
+        listType: listType
       })
     })
       .then(res => {
@@ -36,12 +43,7 @@ export default function AddToListButton({ isAuthenticated, navigate, movie, refr
         if (!res.ok) return res.json().then(data => { throw new Error(data.message || "Erro ao adicionar filme à lista."); });
         return res.json();
       })
-      .then(data => {
-        // Atualize sua UI conforme necessário
-        setShowOptions(false);
-        if (refreshLists) refreshLists();
-        // Opcional: console.log('Filme adicionado:', data);
-      })
+      
       .catch(err => {
         if (err.message !== "Unauthorized") {
           alert("Erro ao adicionar filme à lista: " + err.message);

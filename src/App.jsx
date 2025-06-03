@@ -190,9 +190,7 @@ function Home({ TMDB_API_KEY, WATCHMODE_API_KEY, TMDB_URL, isAuthenticated, want
               <AddToListButton
                 isAuthenticated={isAuthenticated}
                 navigate={navigate}
-                movie={movie}
-                addWantToWatch={(movie) => setWantToWatch((prev) => [...prev, movie])}
-                addWatched={(movie) => setWatched((prev) => [...prev, movie])}
+                movieId={movie.id}
               />
               {/* Botão Toggle para expandir a visualização do filme*/}
               <button
