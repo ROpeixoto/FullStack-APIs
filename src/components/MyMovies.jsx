@@ -1,19 +1,44 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import "./MyMovies.css";
+import { buscarFilmesDaLista } from "../utils/api";
 
 export default function MyMovies({ onToggleDetails, expandedMovieId, isAuthenticated }) {
   const [wantToWatch, setWantToWatch] = useState([]);
   const [watched, setWatched] = useState([]);
+  const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY;
+  const TMDB_URL = "https://api.themoviedb.org/3";
+
+  // Função para buscar detalhes de vários filmes pelo ID
+  const fetchMovieDetails = async (ids) => {
+    const promises = ids.map(async (id) => {
+      const res = await fetch(`${TMDB_URL}/movie/${id}`, {
+        headers: {
+          Authorization: `Bearer ${TMDB_API_KEY}`,
+          accept: "application/json",
+        },
+      });
+      return res.json();
+    });
+    return Promise.all(promises);
+  };
 
   const fetchLists = async () => {
     try {
       const [wantRes, watchedRes] = await Promise.all([
-        axios.get(`${import.meta.env.VITE_API_URL}user-movie-list/wantToWatch`),
-        axios.get(`${import.meta.env.VITE_API_URL}user-movie-list/watched`)
+        buscarFilmesDaLista("wantToWatch"),
+        buscarFilmesDaLista("watched")
       ]);
-      setWantToWatch(wantRes.data);
-      setWatched(watchedRes.data);
+      // Supondo que wantRes e watchedRes são arrays de objetos com { movieId }
+      const wantIds = wantRes.map(item => item.movieId);
+      const watchedIds = watchedRes.map(item => item.movieId);
+
+      const [wantDetails, watchedDetails] = await Promise.all([
+        fetchMovieDetails(wantIds),
+        fetchMovieDetails(watchedIds)
+      ]);
+      setWantToWatch(wantDetails);
+      setWatched(watchedDetails);
     } catch (err) {
       setWantToWatch([]);
       setWatched([]);
@@ -26,7 +51,15 @@ export default function MyMovies({ onToggleDetails, expandedMovieId, isAuthentic
 
   const handleDelete = async (movieId, listType) => {
     try {
-      await axios.delete(`${import.meta.env.VITE_API_URL}user-movie-list/${movieId}/${listType}`);
+      const token = localStorage.getItem('authToken');
+      await fetch(`${import.meta.env.VITE_API_URL}user-movie-list`, {
+        method: "DELETE",
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ movieId, listType })
+      });
       fetchLists(); // Atualiza as listas após deletar
     } catch (err) {
       alert("Erro ao remover filme da lista!");
