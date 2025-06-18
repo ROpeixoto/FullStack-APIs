@@ -13,3 +13,57 @@
   padding: 1rem;
   width: 200px;
 }
+/* Container dos botões */
+.movie-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* Botões base */
+.btn {
+  padding: 8px 14px;
+  font-size: 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.3s ease;
+  flex: 1; /* Faz os botões terem o mesmo tamanho */
+  text-align: center;
+}
+
+/* Botão Mark as Watched */
+.btn.watched-btn {
+  background-color: #4caf50; /* verde */
+  color: white;
+}
+
+.btn.watched-btn:hover {
+  background-color: #388e3c;
+}
+
+/* Botão Remove */
+.delete-button {
+  background-color: #e53935; /* vermelho */
+  color: white;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+  flex: 1; /* Faz os botões terem o mesmo tamanho */
+}
+
+.delete-button:hover {
+  background-color: #b71c1c;
+}
+
+/* Botão Detalhes */
+.details-button {
+  background-color: #2196f3; /* azul */
+  color: white;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+  flex: 1; /* Faz os botões terem o mesmo tamanho */
+}
+
+.details-button:hover {
+  background-color: #1565c0;
+}
