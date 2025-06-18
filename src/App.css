@@ -344,3 +344,35 @@ body{
   cursor: pointer;
   font-weight: bold;
 }
+
+.movie-buttons button {
+  font-size: 14px;
+  background: #1976d2; /* Azul vibrante */
+  color: white;
+  box-shadow: 0 3px 6px rgba(25, 118, 210, 0.4);
+}
+
+.movie-buttons button:hover {
+  background-color: #0056b3; /* azul mais escuro ao passar o mouse */
+}
+
+.movie-buttons button:active {
+  transform: scale(0.95);
+}
+
+.movie-buttons2 button {
+  font-size: 14px;
+  padding: 4px 66px;
+  background: #4caf50; /* Verde vibrante */
+  color: white;
+  box-shadow: 0 3px 6px rgba(76, 175, 80, 0.4);
+}
+
+.movie-buttons2 button:hover {
+  background: #388e3c; /* Verde mais escuro no hover */
+}
+
+.movie-buttons2 button:active {
+  transform: scale(0.95);
+}
+
