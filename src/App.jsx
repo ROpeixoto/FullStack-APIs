@@ -9,60 +9,67 @@ import Team from "./components/Team";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import UserStatus from "./components/UserStatus";
-import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useNavigate, Navigate } from "react-router-dom";
 import AddToListButton from "./components/AddToListButton";
 import MyMovies from "./components/MyMovies";
 
-function Home({ TMDB_API_KEY, WATCHMODE_API_KEY, TMDB_URL, isAuthenticated, wantToWatch, setWantToWatch, watched, setWatched, expandedMovieId, setExpandedMovieId }) {
+function Home({
+  TMDB_API_KEY,
+  WATCHMODE_API_KEY,
+  TMDB_URL,
+  isAuthenticated,
+  wantToWatch,
+  setWantToWatch,
+  watched,
+  setWatched,
+  expandedMovieId,
+  setExpandedMovieId,
+}) {
   const navigate = useNavigate();
-  const [query, setQuery] = useState(""); // para guardar a consulta de busca do usuário
-  const [movies, setMovies] = useState([]); // filmes retornados pela busca
+  const [query, setQuery] = useState(""); // Para guardar a consulta de busca do usuário
+  const [movies, setMovies] = useState([]); // Filmes retornados pela busca
   const [loading, setLoading] = useState(false); // Estado para indicar carregamento
 
-  const [trendingDay, setTrendingDay] = useState([]); // Armazena os filmes em alta DIA (trending)
-  const [trendingWeek, setTrendingWeek] = useState([]); // Armazena os filmes em alta SEMANA (trending)
+  const [trendingDay, setTrendingDay] = useState([]); // Filmes em alta do dia
+  const [trendingWeek, setTrendingWeek] = useState([]); // Filmes em alta da semana
 
-  const [sortOption, setSortOption] = useState("popularity"); //opção que o usuário escolhe do Order By, já setado em popularidade(Filmes mais populosos)
+  const [sortOption, setSortOption] = useState("popularity"); // Opção para ordenar os filmes
 
   const [watchSource, setWatchSource] = useState({}); //para guardar os sources dos filmes
-  //const [wantToWatch, setWantToWatch] = useState([]);
-  //const [watched, setWatched] = useState([]);
- // const [expandedMovieId, setExpandedMovieId] = useState(null);
 
-  useEffect(() => {   // Hook para buscar os filmes em alta assim que o componente for montado (pagina carregar)
-    const TrendingMoviesDay = async () => {     //função de espera para puxar os dados dos trendings no tmdb
-      const dayResponse = await fetch(`${TMDB_URL}/trending/movie/day`, {
+  useEffect(() => {
+    const fetchTrendingMoviesDay = async () => {
+      const response = await fetch(`${TMDB_URL}/trending/movie/day`, {
         headers: {
           Authorization: `Bearer ${TMDB_API_KEY}`,
           accept: "application/json",
         },
       });
-      const dayData = await dayResponse.json();
-      setTrendingDay(dayData.results.slice(0, 10)); // pega os top 10 trending DO DIA
+      const data = await response.json();
+      setTrendingDay(data.results.slice(0, 4));
     };
 
-    TrendingMoviesDay(); // chama a função ao montar o componente
-  }, []);
+    fetchTrendingMoviesDay();
+  }, [TMDB_API_KEY, TMDB_URL]);
 
-  useEffect(() => {  //Mesma função, porem para puxar os trendings da semanaa
-    const TrendingMoviesWeek = async () => {       //função de espera para puxar os dados dos trendings no tmdb
-      const dayResponse = await fetch(`${TMDB_URL}/trending/movie/week`, {
+  useEffect(() => {
+    const fetchTrendingMoviesWeek = async () => {
+      const response = await fetch(`${TMDB_URL}/trending/movie/week`, {
         headers: {
           Authorization: `Bearer ${TMDB_API_KEY}`,
           accept: "application/json",
         },
       });
-      const weekData = await dayResponse.json();
-      setTrendingWeek(weekData.results.slice(0, 10)); // pega os top 10 trending da SEMANA
+      const data = await response.json();
+      setTrendingWeek(data.results.slice(0, 4)); 
     };
 
-    TrendingMoviesWeek(); // Chama a função ao montar o componente
-  }, []);
+    fetchTrendingMoviesWeek();
+  }, [TMDB_API_KEY, TMDB_URL]);
 
-  // Função para buscar filmes com base na consulta que o usuario fizer
   const searchMovies = async () => {
-    setLoading(true);  // Ativa o estado de carregamento
-    const response = await fetch(     // Faz a requisição para a API de busca do Banco de dados tmdb
+    setLoading(true);
+    const response = await fetch(
       `${TMDB_URL}/search/movie?query=${encodeURIComponent(
         query
       )}&include_adult=false&language=en-US&page=1`,
@@ -73,23 +80,19 @@ function Home({ TMDB_API_KEY, WATCHMODE_API_KEY, TMDB_URL, isAuthenticated, want
         },
       }
     );
-    const moviesData = await response.json(); // converte a resposta em JSON
-    setMovies(moviesData.results); // atualiza os filmes buscados
-    setLoading(false); // finaliza o carregamento
-    setExpandedMovieId(null); // reseta o view expandido (detalhes)
+    const moviesData = await response.json();
+    setMovies(moviesData.results);
+    setLoading(false);
+    setExpandedMovieId(null);
   };
 
-  // Função executada ao enviar o formulário de busca(clicar no botao)
   const handleSubmit = (e) => {
     e.preventDefault();
     searchMovies();
   };
 
-  //função para fazer o sort da lista dos filmes
-  const sortMovies = (moviess) => {
-    //logica do a - b, caso retorne negativo, o A vem antes do B,
-    //Caso retorne positivo, o B vem antes do A
-    return [...moviess].sort((a, b) => {
+  const sortMovies = (movies) => {
+    return [...movies].sort((a, b) => {
       switch (sortOption) {
         case "popularity":
           return b.popularity - a.popularity;
@@ -130,7 +133,7 @@ function Home({ TMDB_API_KEY, WATCHMODE_API_KEY, TMDB_URL, isAuthenticated, want
     return providers;
   };
   //  função para mudar o estado de view do filme
-  const toggleMovieDetails = async (movieId) => {
+    const toggleMovieDetails = async (movieId) => {
 
     //função para fazer as buscas unicas dos filmes, e não gastar a quota da api
     if (expandedMovieId !== movieId && !watchSource[movieId]) {
@@ -145,6 +148,7 @@ function Home({ TMDB_API_KEY, WATCHMODE_API_KEY, TMDB_URL, isAuthenticated, want
     //  e abre outro filme se o id do filme clicado for diferente do filme expandido
     setExpandedMovieId(expandedMovieId === movieId ? null : movieId);
   };
+
   return (
     <div className="app">
       <div className="form-container">
@@ -155,22 +159,67 @@ function Home({ TMDB_API_KEY, WATCHMODE_API_KEY, TMDB_URL, isAuthenticated, want
           loading={loading}
         />
       </div>
-      {/* Input para colocar a ordem que o usuário deseja para os filmes */}
+
       {movies.length > 0 && (
         <Sorting sortOption={sortOption} setSortOption={setSortOption} />
       )}
 
-      {/* Se ainda não houve uma busca (lista de filmes está vazia), mostra os trending da semana e do dia */}
       {movies.length === 0 && (
         <>
-          <TrendingType title="🔥 Trending Today 🔥" movies={trendingDay} />
-          <TrendingType
-            title="🔥 Trending This Week 🔥"
-            movies={trendingWeek}
-          />
+          <h2>🔥 Trending Today 🔥</h2>
+          <div className="movies">
+            {trendingDay.map((movie) => (
+              <div key={movie.id} className="movie">
+                {movie.poster_path && (
+                  <img
+                    src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
+                    alt={movie.title}
+                  />
+                )}
+                <h3>{movie.title}</h3>
+                <p>{movie.release_date}</p>
+                <p>Rating: {movie.vote_average} / 10</p>
+                <AddToListButton
+                  movieId={movie.id}
+                  wantToWatch={wantToWatch}
+                  setWantToWatch={setWantToWatch}
+                  watched={watched}
+                  setWatched={setWatched}
+                  isAuthenticated={isAuthenticated}
+                  navigate={navigate}
+                />
+              </div>
+            ))}
+          </div>
+
+          <h2>🔥 Trending This Week 🔥</h2>
+          <div className="movies">
+            {trendingWeek.map((movie) => (
+              <div key={movie.id} className="movie">
+                {movie.poster_path && (
+                  <img
+                    src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
+                    alt={movie.title}
+                  />
+                )}
+                <h3>{movie.title}</h3>
+                <p>{movie.release_date}</p>
+                <p>Rating: {movie.vote_average} / 10</p>
+                <AddToListButton
+                  movieId={movie.id}
+                  wantToWatch={wantToWatch}
+                  setWantToWatch={setWantToWatch}
+                  watched={watched}
+                  setWatched={setWatched}
+                  isAuthenticated={isAuthenticated}
+                  navigate={navigate}
+                />
+              </div>
+            ))}
+          </div>
         </>
       )}
-      {/* Se houver filmes buscados, exibe os 5 primeiros e faz um sort (padrão de popularidade)*/}
+
       <div className="movies">
         {sortMovies(movies)
           .slice(0, 5)
@@ -186,13 +235,15 @@ function Home({ TMDB_API_KEY, WATCHMODE_API_KEY, TMDB_URL, isAuthenticated, want
               <p>{movie.release_date}</p>
               <p>Rating: {movie.vote_average} / 10</p>
 
-              {/* Botão Add to list */}
               <AddToListButton
+                movieId={movie.id}
+                wantToWatch={wantToWatch}
+                setWantToWatch={setWantToWatch}
+                watched={watched}
+                setWatched={setWatched}
                 isAuthenticated={isAuthenticated}
                 navigate={navigate}
-                movieId={movie.id}
               />
-              {/* Botão Toggle para expandir a visualização do filme*/}
               <button
                 onClick={() => toggleMovieDetails(movie.id)}
                 className="details-button"
@@ -201,8 +252,7 @@ function Home({ TMDB_API_KEY, WATCHMODE_API_KEY, TMDB_URL, isAuthenticated, want
                  mostra um hide details, e caso contrario, mostra um view details*/}
                 {expandedMovieId === movie.id ? "Hide Details" : "View Details"}
               </button>
-                {/*Aqui ele só mostra os detalhes se, e somente se o id no expanded movie for igual ao id do filme de agora*/}
-              {expandedMovieId === movie.id && (
+                {expandedMovieId === movie.id && (
                 <div className="movie-details">
                   <p>
                     <strong>Overview:</strong> {movie.overview}
@@ -274,6 +324,12 @@ function App() {
                   />
                 }
               />
+              {/* Redireciona qualquer outra rota (inclusive /) para /login */}
+              <Route path="*" element={<Navigate to="/login" replace />} />
+              <Route path="/" element={<Navigate to="/login" replace />} />
+            </>
+          ) : (
+            <>
               <Route
                 path="/"
                 element={
@@ -291,17 +347,14 @@ function App() {
                   />
                 }
               />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </>
-          ) : (
-            <>
-              
               <Route path="/about" element={<About />} />
               <Route path="/team" element={<Team />} />
               <Route
                 path="/mymovies"
                 element={
                   <MyMovies
+                    wantToWatch={wantToWatch}
+                    watched={watched}
                     onToggleDetails={setExpandedMovieId}
                     expandedMovieId={expandedMovieId}
                     isAuthenticated={isAuthenticated}

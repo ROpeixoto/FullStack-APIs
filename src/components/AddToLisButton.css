@@ -1,0 +1,57 @@
+/* Botão padrão */
+button {
+  margin-top: 8px;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 48px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+/* Botão "Want to Watch" */
+.want-to-watch-btn {
+  font-size: 14px;
+  background: #1976d2; /* Azul vibrante */
+  color: white;
+  box-shadow: 0 3px 6px rgba(25, 118, 210, 0.4);
+}
+
+.want-to-watch-btn:hover {
+  background: #1565c0; /* Azul mais escuro no hover */
+}
+
+.want-to-watch-btn:active {
+  transform: scale(0.95);
+}
+
+.want-to-watch-btn.in-list {
+  background: #1565c0; /* Azul mais escuro no estado ativo */
+}
+
+/* Botão "Watched" */
+.watched-btn {
+  font-size: 14px;
+    padding: 4px 66px;
+  background: #4caf50; /* Verde vibrante */
+  color: white;
+  box-shadow: 0 3px 6px rgba(76, 175, 80, 0.4);
+}
+
+.watched-btn:hover {
+  background: #388e3c; /* Verde mais escuro no hover */
+}
+
+.watched-btn:active {
+  transform: scale(0.95);
+}
+
+.watched-btn.in-list {
+  background: #2e7d32; /* Verde mais escuro no estado ativo */
+}
+
+/* Botão desativado */
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #bdbdbd;
+}
