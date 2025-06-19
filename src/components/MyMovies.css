@@ -1,18 +1,21 @@
 .my-movies-page h2 {
   margin-top: 2rem;
 }
+
 .movies {
   display: flex;
   gap: 20px;
   flex-wrap: wrap;
   margin-bottom: 2rem;
 }
+
 .movie {
-  background: #23223a;
+  background: #29273d; /* Fundo mais claro que o fundo principal */
   border-radius: 8px;
   padding: 1rem;
   width: 200px;
 }
+
 /* Container dos botões */
 .movie-buttons {
   display: flex;
@@ -22,48 +25,66 @@
 
 /* Botões base */
 .btn {
-  padding: 8px 14px;
+  padding: 10px 16px;
   font-size: 14px;
-  border-radius: 4px;
+  font-weight: bold;
+  border-radius: 6px;
   cursor: pointer;
   border: none;
-  transition: background-color 0.3s ease;
-  flex: 1; /* Faz os botões terem o mesmo tamanho */
+  transition: background-color 0.3s ease, transform 0.2s ease;
   text-align: center;
+  text-transform: uppercase;
 }
 
 /* Botão Mark as Watched */
 .btn.watched-btn {
-  background-color: #4caf50; /* verde */
+  padding: 10px 18px;
+  background-color: #6200ee; /* Roxo principal */
   color: white;
+  box-shadow: 0 4px 6px rgba(98, 0, 238, 0.4);
 }
 
 .btn.watched-btn:hover {
-  background-color: #388e3c;
+  background-color: #45009d; /* Roxo mais escuro */
+  transform: translateY(-2px);
+}
+
+.btn.watched-btn:active {
+  transform: scale(0.97);
+  background-color: #37007a; /* Roxo ainda mais escuro */
 }
 
 /* Botão Remove */
 .delete-button {
-  background-color: #e53935; /* vermelho */
+  background-color: #e53935; /* Vermelho principal */
   color: white;
-  font-size: 14px;
-  transition: background-color 0.3s ease;
-  flex: 1; /* Faz os botões terem o mesmo tamanho */
+  box-shadow: 0 4px 6px rgba(229, 57, 53, 0.4);
 }
 
 .delete-button:hover {
-  background-color: #b71c1c;
+  background-color: #b71c1c; /* Vermelho mais escuro */
+  transform: translateY(-2px);
+}
+
+.delete-button:active {
+  transform: scale(0.97);
+  background-color: #9a0007; /* Vermelho ainda mais escuro */
 }
 
 /* Botão Detalhes */
 .details-button {
-  background-color: #2196f3; /* azul */
+  padding: 10px 18px;
+  background-color: #304ffe; /* Azul escuro */
   color: white;
-  font-size: 14px;
-  transition: background-color 0.3s ease;
-  flex: 1; /* Faz os botões terem o mesmo tamanho */
+  box-shadow: 0 4px 6px rgba(48, 79, 254, 0.4);
 }
 
 .details-button:hover {
-  background-color: #1565c0;
+  background-color: #0026ca; /* Azul mais vibrante */
+  transform: translateY(-2px);
+}
+
+.details-button:active {
+  transform: scale(0.97);
+  background-color: #001a9c; /* Azul ainda mais escuro */
 }

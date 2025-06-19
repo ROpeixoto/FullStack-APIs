@@ -192,23 +192,12 @@ export default function MyMovies({ onToggleDetails, expandedMovieId, isAuthentic
             <button
               className="btn watched-btn"
               onClick={() => handleMoveToWatched(movie.id)}
-              style={{ marginLeft: "8px" }}
             >
               Mark as Watched
             </button>
             <button
               onClick={() => handleDelete(movie.id, "wantToWatch")}
               className="delete-button"
-              style={{
-                marginTop: "8px",
-                background: "#e53935",
-                color: "#fff",
-                border: "none",
-                borderRadius: "4px",
-                padding: "4px 10px",
-                cursor: "pointer",
-                marginLeft: "8px",
-              }}
             >
               Remove
             </button>
@@ -217,16 +206,6 @@ export default function MyMovies({ onToggleDetails, expandedMovieId, isAuthentic
           <button
             onClick={() => handleDelete(movie.id, "watched")}
             className="delete-button"
-            style={{
-              marginTop: "8px",
-              background: "#e53935",
-              color: "#fff",
-              border: "none",
-              borderRadius: "4px",
-              padding: "4px 10px",
-              cursor: "pointer",
-              marginLeft: "8px",
-            }}
           >
             Remove
           </button>

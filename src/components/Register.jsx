@@ -78,7 +78,7 @@ export default function Register({ setIsAuthenticated, setUserName }) {
         <div className="auth-links">
           <span
             className="auth-link"
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/login")}
             style={{ textDecoration: "underline", cursor: "pointer" }}
           >
             Back to login
