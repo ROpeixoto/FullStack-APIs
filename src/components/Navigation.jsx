@@ -1,34 +1,59 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink } from "react-router-dom";
+import { useState } from "react";
 
-const Navigation = () => {
+const Navigation = ({ isAuthenticated }) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+
   return (
-    <nav className="main-nav">
-      <NavLink 
-        to="/" 
-        end
-        className={({ isActive }) => isActive ? "active-link" : ""}
-      >
-        Home
-      </NavLink>
-      <NavLink 
-        to="/about" 
-        className={({ isActive }) => isActive ? "active-link" : ""}
-      >
-        About
-      </NavLink>
-      <NavLink 
-        to="/team" 
-        className={({ isActive }) => isActive ? "active-link" : ""}
-      >
-        Team
-      </NavLink>
-      <NavLink 
-        to="/mymovies" 
-        className={({ isActive }) => isActive ? "active-link" : ""}
-      >
-        My Movies
-      </NavLink>
-    </nav>
+    <div className="navigation-container">
+      <button onClick={toggleMenu} className="burger-button">
+        ☰
+      </button>
+      {isMenuOpen && (
+        <div className="burger-menu">
+          <NavLink 
+            to="/" 
+            end
+            className={({ isActive }) => (isActive ? "active-link" : "")}
+            onClick={toggleMenu}
+          >
+            Home
+          </NavLink>
+          <NavLink 
+            to="/trending" 
+            className={({ isActive }) => (isActive ? "active-link" : "")}
+            onClick={toggleMenu}
+          >
+            Trending
+          </NavLink>
+          <NavLink 
+            to="/about" 
+            className={({ isActive }) => (isActive ? "active-link" : "")}
+            onClick={toggleMenu}
+          >
+            About
+          </NavLink>
+          <NavLink 
+            to="/team" 
+            className={({ isActive }) => (isActive ? "active-link" : "")}
+            onClick={toggleMenu}
+          >
+            Team
+          </NavLink>
+          {isAuthenticated && (
+            <NavLink 
+              to="/mymovies" 
+              className={({ isActive }) => (isActive ? "active-link" : "")}
+              onClick={toggleMenu}
+            >
+              My Movies
+            </NavLink>
+          )}
+        </div>
+      )}
+    </div>
   );
 };
 

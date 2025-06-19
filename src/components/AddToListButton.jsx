@@ -1,12 +1,12 @@
-
-
 import React, { useState } from "react";
 import "./AddToListButton.css";
 
 function AddToListButtons({ 
   movieId, 
-  wantToWatch, setWantToWatch, 
-  watched, setWatched, 
+  wantToWatch = [], 
+  setWantToWatch, 
+  watched = [], 
+  setWatched, 
   isAuthenticated, 
   navigate 
 }) {
@@ -15,8 +15,9 @@ function AddToListButtons({
 
   const token = localStorage.getItem("authToken");
 
-  const isInWantToWatch = wantToWatch.includes(movieId);
-  const isInWatched = watched.includes(movieId);
+  // Proteção para evitar erro se wantToWatch ou watched forem undefined
+  const isInWantToWatch = Array.isArray(wantToWatch) && wantToWatch.includes(movieId);
+  const isInWatched = Array.isArray(watched) && watched.includes(movieId);
 
   if (!token && isAuthenticated) {
     // Token faltando, forçar logout?

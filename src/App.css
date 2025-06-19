@@ -29,21 +29,17 @@ button:disabled {
   cursor: not-allowed;
 }
 
-
-
-
-body{
-
+body {
   color: rgba(193, 187, 236, 0.782);
   background-color: #1d1c28;
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-
 }
+
 .form-container {
   display: flex;
-  justify-content: center; 
-  align-items: flex-start; 
-  padding-top: 8vh; 
+  justify-content: center;
+  align-items: center; /* Centraliza verticalmente */
+  padding-top: 8vh;
   margin: 0;
   margin-bottom: 7%;
 }
@@ -52,22 +48,23 @@ body{
   display: flex;
   gap: 10px;
   width: 100%;
-  max-width: 500px; 
+  max-width: 500px;
+  align-items: center; /* Centraliza os itens verticalmente */
 }
-
-
-
 
 .search-place {
   flex: 1;
-  padding: 10px 15px; 
-  font-size: 15px; 
-  border: 2px solid rgba(193, 187, 236, 0.582); 
+  padding: 0 15px; /* Padding horizontal */
+  font-size: 16px;
+  border: 2px solid rgba(193, 187, 236, 0.582);
   border-radius: 5px;
-  width: 100%; 
-  background-color: rgba(193, 187, 236, 0.882); 
+  background-color: rgba(193, 187, 236, 0.882);
   color: #1d1c28;
-  outline: none; 
+  outline: none;
+  height: 40px; /* Define altura igual ao botão */
+  display: flex;
+  align-items: center; /* Centraliza o texto verticalmente */
+  box-sizing: border-box;
 }
 
 .search-place:focus {
@@ -76,20 +73,26 @@ body{
 }
 
 .search-button {
-  padding: 10px 20px;
+  padding: 0 20px; /* Padding horizontal */
   font-size: 16px;
-  background-color: #6200ee; 
+  background-color: #6200ee;
   color: rgba(193, 187, 236, 0.782);
   border: none;
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s;
+  height: 40px; /* Define altura igual ao input */
+  display: flex;
+  align-items: center; /* Centraliza o texto verticalmente */
+  justify-content: center; /* Centraliza horizontalmente */
+  box-sizing: border-box;
 }
 
 .search-button:hover {
-  background-color: #3700b3; 
+  background-color: #3700b3;
   color: rgba(193, 187, 236, 0.982);
 }
+/* Resto do seu CSS mantido igual */
 
 .movies-trending {
   display: flex;
@@ -106,12 +109,12 @@ body{
 
 .movie {
   min-width: 200px;
-  max-width: 200px; 
+  max-width: 200px;
   display: flex;
   flex-direction: column;
-  background: #29272c; 
+  background: #29272c;
   border-radius: 8px;
-  overflow: hidden; 
+  overflow: hidden;
   box-shadow: 0 4px 8px rgba(97, 95, 95, 0.2);
   transition: transform 0.3s;
 }
@@ -122,23 +125,24 @@ body{
 
 .movie img {
   width: 100%;
-  height: 300px; 
-  object-fit: cover; }
+  height: 300px;
+  object-fit: cover;
+}
 
 .movie h3 {
   font-size: 16px;
   margin: 12px 10px 0;
-  height: 40px; 
+  height: 40px;
   overflow: hidden;
-  
+
   display: -webkit-box;
   display: -moz-box;
   display: box;
-  
+
   -webkit-line-clamp: 2;
   -moz-line-clamp: 2;
   line-clamp: 2;
-  
+
   -webkit-box-orient: vertical;
   -moz-box-orient: vertical;
   box-orient: vertical;
@@ -150,43 +154,40 @@ body{
   color: #ccc;
 }
 
-
-
 .movie-details {
   padding: 10px;
   background: #2a2a2a;
   font-size: 14px;
   text-align: justify;
-  
 }
 
-
-.details-button{
+.details-button {
   padding: 8px 15px;
   font-size: 12px;
-  background-color: rgba(193, 187, 236, 0.782); 
+  background-color: rgba(193, 187, 236, 0.782);
   color: #1d1c28;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s;
 }
+
 .details-button:hover {
-  background-color: #3700b3; 
+  background-color: #3700b3;
   color: rgba(193, 187, 236, 0.982);
 }
 
-.sort-container{
+.sort-container {
   display: flex;
-  justify-content: center; 
-  align-items: flex-start; 
+  justify-content: center;
+  align-items: flex-start;
   gap: 10px;
 }
 
-.sort-select{
+.sort-select {
   padding: 4px 10px;
   font-size: 14px;
-  background-color: rgba(193, 187, 236, 0.782); 
+  background-color: rgba(193, 187, 236, 0.782);
   color: #1d1c28;
   border: none;
   border-radius: 5px;
@@ -211,8 +212,7 @@ body{
   font-weight: bold;
   background: rgba(193, 187, 236, 0.982);
   border-radius: 8px;
-  padding: 5px 15px; 
-
+  padding: 5px 15px;
 }
 
 .main-nav a:hover {
@@ -220,12 +220,11 @@ body{
 }
 
 .page-content {
- 
   display: flex;
   flex-direction: column;
-  background: #232231; 
+  background: #232231;
   border-radius: 8px;
-  overflow: hidden; 
+  overflow: hidden;
   box-shadow: 8px 8px 8px 8px rgba(97, 95, 95, 0.2);
   transition: transform 0.3s;
 }
@@ -236,8 +235,6 @@ body{
   padding-bottom: 2px;
 }
 
-
-
 .repo-link {
   display: inline-block;
   margin-top: 0.5rem;
@@ -247,7 +244,7 @@ body{
   transition: all 0.2s ease;
 }
 
-.repo-link:hover{
+.repo-link:hover {
   color: #7e31ea;
 }
 
@@ -260,25 +257,29 @@ body{
 }
 
 .page-content ul {
-  padding-left: 1rem; 
-  list-style-position: inside; 
-  text-align: center; 
-  display: inline-block; 
-  margin: 0 auto; 
+  padding-left: 1rem;
+  list-style-position: inside;
+  text-align: center;
+  display: inline-block;
+  margin: 0 auto;
   width: fit-content;
 }
 
 .page-content li {
-  text-align: left; 
-  margin-left: -1rem; 
+  text-align: left;
+  margin-left: -1rem;
 }
 
 .user-status {
   position: absolute;
   top: 20px;
   right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
+/* Botão Login */
 .login-button {
   padding: 8px 16px;
   background-color: #6200ee;
@@ -287,37 +288,40 @@ body{
   border-radius: 4px;
   cursor: pointer;
   font-size: 14px;
+  text-decoration: none;
 }
 
 .login-button:hover {
   background-color: #3700b3;
 }
 
+/* User profile */
 .user-profile {
   display: flex;
   align-items: center;
   gap: 10px;
+  color: rgba(193, 187, 236, 0.9);
 }
 
 .user-name {
-  color: rgba(193, 187, 236, 0.782);
   font-weight: bold;
 }
 
 .logout-button {
   padding: 6px 12px;
   background-color: transparent;
-  color: rgba(193, 187, 236, 0.782);
-  border: 1px solid rgba(193, 187, 236, 0.582);
+  color: rgba(193, 187, 236, 0.9);
+  border: 1px solid rgba(193, 187, 236, 0.6);
   border-radius: 4px;
   cursor: pointer;
   font-size: 12px;
 }
 
 .logout-button:hover {
-  background-color: rgba(97, 95, 95, 0.2);
+  background-color: rgba(97, 95, 95, 0.3);
 }
 
+/* Botões da lista */
 .add-list-btn {
   margin-top: 6px;
   padding: 6px 14px;
@@ -375,4 +379,109 @@ body{
 .movie-buttons2 button:active {
   transform: scale(0.95);
 }
+
+/* Navegação com burger e botão login */
+
+.navigation-container {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Espaço entre login e burger */
+  z-index: 1100;
+}
+
+/* Botão login fica à esquerda */
+.navigation-container .login-button {
+  order: 0; /* Primeiro */
+  height: 36px;
+  padding: 6px 16px;
+  font-size: 14px;
+  border-radius: 4px;
+}
+
+/* Botão burger fica à direita */
+.navigation-container .burger-button {
+  order: 1; /* Segundo */
+  background: #6200ee; /* cor roxa */
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: rgba(193, 187, 236, 0.9);
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  padding: 0;
+}
+
+.navigation-container .burger-button:focus {
+  outline: 2px solid #3700b3;
+}
+
+/* Menu tipo burger */
+.burger-menu {
+  position: absolute;
+  top: 110%; /* um pouco abaixo do botão */
+  right: 0; /* alinhado à direita do botão */
+  background-color: #1d1c28; /* mesma cor do fundo */
+  border: 1px solid #6200ee;
+  box-shadow: 0 4px 8px rgba(98, 0, 238, 0.3);
+  border-radius: 8px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  min-width: 110px;
+  padding: 0.25rem 0;
+}
+
+/* Links dentro do burger */
+.burger-menu a {
+  color: rgba(193, 187, 236, 0.9);
+  padding: 8px 16px;
+  text-decoration: none;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+  white-space: nowrap;
+}
+
+.burger-menu a:hover {
+  background-color: #6200ee;
+  color: #fff;
+}
+
+/* Ajuste geral para evitar que o menu saia da tela em dispositivos pequenos */
+@media (max-width: 400px) {
+  .burger-menu {
+    right: 10px;
+    min-width: 130px;
+  }
+}
+
+/* Título Movie Search */
+.site-title {
+  font-size: 32px; /* Aumentado o tamanho da fonte */
+  font-weight: bold;
+  color: rgba(193, 187, 236, 0.9);
+  margin: 0;
+}
+
+/* Centralizado (Home e Login) */
+.site-title.centered {
+  position: relative;
+  text-align: center;
+  margin-top: 20px;
+}
+
+/* No canto superior esquerdo (outras páginas) */
+.site-title.corner {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 1200;
+}
+
 
