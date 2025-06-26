@@ -3,6 +3,28 @@ import { useEffect, useState } from "react";
 import "./MyMovies.css";
 import { buscarFilmesDaLista } from "../utils/api";
 
+const GENRE_MAP = {
+  28: "Action",
+  12: "Adventure",
+  16: "Animation",
+  35: "Comedy",
+  80: "Crime",
+  99: "Documentary",
+  18: "Drama",
+  10751: "Family",
+  14: "Fantasy",
+  36: "History",
+  27: "Horror",
+  10402: "Music",
+  9648: "Mystery",
+  10749: "Romance",
+  878: "Science Fiction",
+  10770: "TV Movie",
+  53: "Thriller",
+  10752: "War",
+  37: "Western",
+};
+
 export default function MyMovies({ onToggleDetails, expandedMovieId, isAuthenticated }) {
   const [wantToWatch, setWantToWatch] = useState([]);
   const [watched, setWatched] = useState([]);
@@ -229,6 +251,16 @@ export default function MyMovies({ onToggleDetails, expandedMovieId, isAuthentic
                 <p>
                   <strong>Original Language:</strong> {movie.original_language}
                 </p>
+                {/* Adicione esta linha para mostrar os gêneros */}
+                {movie.genres && movie.genres.length > 0 ? (
+                  <p>
+                    <strong>Genres:</strong> {movie.genres.map(g => g.name).join(", ")}
+                  </p>
+                ) : movie.genre_ids && movie.genre_ids.length > 0 ? (
+                  <p>
+                    <strong>Genres:</strong> {movie.genre_ids.map(id => GENRE_MAP[id] || id).join(", ")}
+                  </p>
+                ) : null}
                 {watchSource[movie.id] && watchSource[movie.id].length > 0 && (
                   <p>
                     <strong>Available on:</strong>{" "}
