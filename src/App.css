@@ -86,13 +86,9 @@ body {
   align-items: center; /* Centraliza o texto verticalmente */
   justify-content: center; /* Centraliza horizontalmente */
   box-sizing: border-box;
+  margin-top: 0;
 }
 
-.search-button:hover {
-  background-color: #3700b3;
-  color: rgba(193, 187, 236, 0.982);
-}
-/* Resto do seu CSS mantido igual */
 
 .movies-trending {
   display: flex;

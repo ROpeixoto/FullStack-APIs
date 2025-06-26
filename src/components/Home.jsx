@@ -119,6 +119,13 @@ function Home({
         />
       </div>
 
+      {/* Mensagem de boas-vindas */}
+      {movies.length === 0 && !loading && (
+        <div style={{ margin: "60px auto", fontSize: "1.5rem", color: "rgba(193, 187, 236, 0.582)", maxWidth: 600 }}>
+          Welcome to TMDB Search! Find movies, add them to your personal list and have fun!
+        </div>
+      )}
+
       {movies.length > 0 && (
         <Sorting sortOption={sortOption} setSortOption={setSortOption} />
       )}
