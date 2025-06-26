@@ -10,6 +10,7 @@ import UserStatus from "./components/UserStatus";
 import MyMovies from "./components/MyMovies";
 import Home from "./components/Home";
 import Trending from "./components/Trending";
+import Recommendations from "./components/Recommendations";
 
 function App() {
   const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY;
@@ -96,6 +97,9 @@ function App() {
                   />
                 }
               />
+            )}
+            {isAuthenticated && (
+              <Route path="/recommendations" element={<Recommendations />} />
             )}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
