@@ -12,6 +12,8 @@ export default function MyMovies({ onToggleDetails, expandedMovieId, isAuthentic
   const WATCHMODE_API_KEY = import.meta.env.VITE_WATCHMODE_API_KEY;
   const TMDB_URL = "https://api.themoviedb.org/3";
   const [watchSource, setWatchSource] = useState({});
+  const [editingRatingId, setEditingRatingId] = useState(null);
+  const [tempRating, setTempRating] = useState("");
 
   const fetchWhereToWatch = async (tmdbId) => {
     try {
@@ -89,8 +91,17 @@ export default function MyMovies({ onToggleDetails, expandedMovieId, isAuthentic
         fetchMovieDetails(watchedIds),
       ]);
 
+      // Junta o rating do backend com os detalhes do TMDB
+      const watchedWithRatings = watchedDetails.map((movie) => {
+        const backendMovie = watchedRes.find((item) => item.movieId === String(movie.id));
+        return {
+          ...movie,
+          rating: backendMovie?.rating || null,
+        };
+      });
+
       setWantToWatch(wantDetails);
-      setWatched(watchedDetails);
+      setWatched(watchedWithRatings);
     } catch (err) {
       setWantToWatch([]);
       setWatched([]);
@@ -149,6 +160,30 @@ export default function MyMovies({ onToggleDetails, expandedMovieId, isAuthentic
     }
   };
 
+  const handleRatingChange = async (movieId, newRating) => {
+    setTempRating(newRating);
+    setEditingRatingId(movieId);
+  };
+
+  async function handleSaveRating(movieId) {
+    if (!tempRating || tempRating < 1 || tempRating > 5) {
+      setEditingRatingId(null);
+      return;
+    }
+    await fetch(`${import.meta.env.VITE_API_URL}user-movie-list/rate`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+      },
+      body: JSON.stringify({ movieId, rating: Number(tempRating) }),
+    });
+    setEditingRatingId(null);
+    setTempRating("");
+    // Atualize a lista após avaliar
+    fetchLists();
+  }
+
   const renderMovie = (movie, listType) => {
     return (
       <div key={movie.id} className="movie">
@@ -160,39 +195,8 @@ export default function MyMovies({ onToggleDetails, expandedMovieId, isAuthentic
         )}
         <h3>{movie.title}</h3>
         <p>{movie.release_date}</p>
-        <p>Rating: {movie.vote_average} / 10</p>
-        <button
-          onClick={() => toggleMovieDetails(movie.id)}
-          className="details-button"
-        >
-          {expandedMovieId === movie.id ? "Hide Details" : "View Details"}
-        </button>
-        {expandedMovieId === movie.id && (
-          <div className="movie-details">
-            <p>
-              <strong>Overview:</strong> {movie.overview}
-            </p>
-            <p>
-              <strong>Popularity:</strong> {movie.popularity}
-            </p>
-            <p>
-              <strong>Original Language:</strong> {movie.original_language}
-            </p>
-            {watchSource[movie.id] && (
-              <p>
-                <strong>Available on:</strong>{" "}
-                {watchSource[movie.id].map((provider, index) => (
-                  <span key={index}>
-                    {index > 0 && ", "}
-                    <a href={provider.url} target="_blank" rel="noopener noreferrer">
-                      {provider.name}
-                    </a>
-                  </span>
-                ))}
-              </p>
-            )}
-          </div>
-        )}
+        <p>Audience score: {movie.vote_average?.toFixed(1)} / 10</p>
+
         {listType === "wantToWatch" ? (
           <>
             <button
@@ -201,20 +205,93 @@ export default function MyMovies({ onToggleDetails, expandedMovieId, isAuthentic
             >
               Mark as Watched
             </button>
+            {/* Botão View Details só aqui */}
+            <button
+              onClick={() => toggleMovieDetails(movie.id)}
+              className="details-button"
+            >
+              {expandedMovieId === movie.id ? "Hide Details" : "View Details"}
+            </button>
             <button
               onClick={() => handleDelete(movie.id, "wantToWatch")}
               className="delete-button"
             >
               Remove
             </button>
+            {expandedMovieId === movie.id && (
+              <div className="movie-details">
+                <p>
+                  <strong>Overview:</strong> {movie.overview || "No overview available."}
+                </p>
+                <p>
+                  <strong>Popularity:</strong> {movie.popularity}
+                </p>
+                <p>
+                  <strong>Original Language:</strong> {movie.original_language}
+                </p>
+                {watchSource[movie.id] && watchSource[movie.id].length > 0 && (
+                  <p>
+                    <strong>Available on:</strong>{" "}
+                    {watchSource[movie.id].map((provider, index) => (
+                      <span key={index}>
+                        {index > 0 && ", "}
+                        <a href={provider.url} className="repo-link" target="_blank" rel="noopener noreferrer">
+                          {provider.name}
+                        </a>
+                      </span>
+                    ))}
+                  </p>
+                )}
+              </div>
+            )}
           </>
         ) : (
-          <button
-            onClick={() => handleDelete(movie.id, "watched")}
-            className="delete-button"
-          >
-            Remove
-          </button>
+          <>
+            {/* Bloco de avaliação e botão Remove apenas */}
+            <div style={{ marginBottom: "8px" }}>
+              {editingRatingId === movie.id ? (
+                <span>
+                  My rating:
+                  <input
+                    type="number"
+                    min="1"
+                    max="5"
+                    value={tempRating}
+                    onChange={(e) => setTempRating(e.target.value)}
+                    style={{ width: "40px", marginRight: "4px" }}
+                    onBlur={() => handleSaveRating(movie.id)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") handleSaveRating(movie.id);
+                      if (e.key === "Escape") setEditingRatingId(null);
+                    }}
+                    autoFocus
+                  />
+                  /5 ⭐
+                </span>
+              ) : (
+                <span
+                  style={{
+                    cursor: "pointer",
+                    color: "#FFD700",
+                    fontWeight: "bold",
+                  }}
+                  onClick={() => {
+                    setEditingRatingId(movie.id);
+                    setTempRating(movie.rating || "");
+                  }}
+                  title="Click to rate"
+                >
+                  {`My rating: ${movie.rating ? movie.rating : "-"}/5 ⭐`}
+                </span>
+              )}
+            </div>
+            <button
+              onClick={() => handleDelete(movie.id, "watched")}
+              className="delete-button"
+            >
+              Remove
+            </button>
+          </>
         )}
       </div>
     );
