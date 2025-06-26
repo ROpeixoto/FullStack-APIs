@@ -14,7 +14,7 @@ const TrendingType = ({ title, movies }) => {
               )}
               <h3>{movie.title}</h3>
               <p>{movie.release_date}</p>
-              <p>Rating: {movie.vote_average} / 10</p>
+              <p>Audience score: {movie.vote_average?.toFixed(1)} / 10</p>
             </div>
           ))}
         </div>
