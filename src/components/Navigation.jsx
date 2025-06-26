@@ -42,6 +42,13 @@ const Navigation = ({ isAuthenticated }) => {
           >
             Team
           </NavLink>
+          <NavLink 
+            to="/recommendations" 
+            className={({ isActive }) => (isActive ? "active-link" : "")}
+            onClick={toggleMenu}
+          >
+            Recommendations
+          </NavLink>
           {isAuthenticated && (
             <NavLink 
               to="/mymovies" 

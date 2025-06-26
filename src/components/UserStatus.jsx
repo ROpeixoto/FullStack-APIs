@@ -74,6 +74,11 @@ const UserStatus = ({
               MyMovies
             </Link>
           )}
+          {isAuthenticated && (
+            <Link to="/recommendations" onClick={() => setBurgerOpen(false)}>
+              Recommendations
+            </Link>
+          )}
         </nav>
       )}
     </div>
