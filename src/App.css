@@ -217,12 +217,26 @@ body {
 
 .page-content {
   display: flex;
-  flex-direction: column;
-  background: #232231;
+  flex-direction:column;
+  background: #373650;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 8px 8px 8px 8px rgba(97, 95, 95, 0.2);
+  box-shadow: 8px 8px 4px 4px rgba(89, 89, 109, 0.2);
   transition: transform 0.3s;
+  text-align:left;
+  padding: 20px;
+}
+
+.ahead-content {
+  display:block;
+  margin-left: 30px; /* Ajuste o valor conforme necessário */
+  margin-right: 2rem; /* Opcional, se quiser espaçamento dos dois lados */
+}
+
+.half-ahead-content {
+  display:block;
+  margin-left: 15px; /* Ajuste o valor conforme necessário */
+  margin-right: 2rem; /* Opcional, se quiser espaçamento dos dois lados */
 }
 
 .main-nav .active-link {
@@ -244,6 +258,14 @@ body {
   color: #7e31ea;
 }
 
+.repo-pnk {
+  color: #6200ee;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  margin:2px;
+  padding: 2px;
+}
 .closing-statement {
   font-style: italic;
   color: #555;
@@ -257,7 +279,7 @@ body {
   list-style-position: inside;
   text-align: center;
   display: inline-block;
-  margin: 0 auto;
+  margin: 0;
   width: fit-content;
 }
 
