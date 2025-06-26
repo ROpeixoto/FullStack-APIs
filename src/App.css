@@ -227,9 +227,18 @@ body {
   padding: 20px;
 }
 
-.page-content ahead-content {
-  padding-left:10px;
+.ahead-content {
+  display:block;
+  margin-left: 30px; /* Ajuste o valor conforme necessário */
+  margin-right: 2rem; /* Opcional, se quiser espaçamento dos dois lados */
 }
+
+.half-ahead-content {
+  display:block;
+  margin-left: 15px; /* Ajuste o valor conforme necessário */
+  margin-right: 2rem; /* Opcional, se quiser espaçamento dos dois lados */
+}
+
 .main-nav .active-link {
   color: #6200ee;
   border-bottom: 2px solid #6200ee;
@@ -249,6 +258,14 @@ body {
   color: #7e31ea;
 }
 
+.repo-pnk {
+  color: #6200ee;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  margin:2px;
+  padding: 2px;
+}
 .closing-statement {
   font-style: italic;
   color: #555;
