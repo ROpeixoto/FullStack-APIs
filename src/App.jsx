@@ -99,7 +99,20 @@ function App() {
               />
             )}
             {isAuthenticated && (
-              <Route path="/recommendations" element={<Recommendations />} />
+              <Route
+                path="/recommendations"
+                element={
+                  <Recommendations
+                    wantToWatch={wantToWatch}
+                    watched={watched}
+                    isAuthenticated={isAuthenticated}
+                    TMDB_API_KEY={TMDB_API_KEY}
+                    TMDB_URL={TMDB_URL}
+                    setWantToWatch={setWantToWatch}
+                    setWatched={setWatched}
+                  />
+                }
+              />
             )}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

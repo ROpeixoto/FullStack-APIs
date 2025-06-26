@@ -1,0 +1,19 @@
+.movie {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.add-to-list-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.center-btn {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
