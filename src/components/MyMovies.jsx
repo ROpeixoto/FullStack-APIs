@@ -6,6 +6,8 @@ import { buscarFilmesDaLista } from "../utils/api";
 export default function MyMovies({ onToggleDetails, expandedMovieId, isAuthenticated }) {
   const [wantToWatch, setWantToWatch] = useState([]);
   const [watched, setWatched] = useState([]);
+  const [loadingWant, setLoadingWant] = useState(true);
+  const [loadingWatched, setLoadingWatched] = useState(true);
   const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY;
   const WATCHMODE_API_KEY = import.meta.env.VITE_WATCHMODE_API_KEY;
   const TMDB_URL = "https://api.themoviedb.org/3";
@@ -73,6 +75,8 @@ export default function MyMovies({ onToggleDetails, expandedMovieId, isAuthentic
 
   const fetchLists = async () => {
     try {
+      setLoadingWant(true);
+      setLoadingWatched(true);
       const [wantRes, watchedRes] = await Promise.all([
         buscarFilmesDaLista("wantToWatch"),
         buscarFilmesDaLista("watched"),
@@ -88,9 +92,11 @@ export default function MyMovies({ onToggleDetails, expandedMovieId, isAuthentic
       setWantToWatch(wantDetails);
       setWatched(watchedDetails);
     } catch (err) {
-      console.error("Erro ao buscar listas de filmes:", err);
       setWantToWatch([]);
       setWatched([]);
+    } finally {
+      setLoadingWant(false);
+      setLoadingWatched(false);
     }
   };
 
@@ -217,9 +223,21 @@ export default function MyMovies({ onToggleDetails, expandedMovieId, isAuthentic
   return (
     <div className="my-movies-page">
       <h2>Want to Watch</h2>
-      <div className="movies">{wantToWatch.map((movie) => renderMovie(movie, "wantToWatch"))}</div>
+      <div className="movies">
+        {loadingWant ? (
+          <div className="loader"></div>
+        ) : (
+          wantToWatch.map((movie) => renderMovie(movie, "wantToWatch"))
+        )}
+      </div>
       <h2>Watched</h2>
-      <div className="movies">{watched.map((movie) => renderMovie(movie, "watched"))}</div>
+      <div className="movies">
+        {loadingWatched ? (
+          <div className="loader"></div>
+        ) : (
+          watched.map((movie) => renderMovie(movie, "watched"))
+        )}
+      </div>
     </div>
   );
 }
