@@ -9,35 +9,35 @@ const About = () => {
             <p>
             The application leverages two powerful APIs:
           </p>
-          <ul>
-            <li>
+          
+            <p>
             <a 
               href="https://developer.themoviedb.org/docs/getting-started" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="repo-link"
+              className="repo-pnk"
             >TMDB API</a>: Provides comprehensive movie data including titles, ratings, release dates, and overviews
-            </li>
-            <li>
+            </p>
+            <p>
             <a 
               href="https://api.watchmode.com/" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="repo-link"
+              className="repo-pnk"
             >WatchMode API</a>: Supplies streaming availability information across multiple platforms
-            </li>
-          </ul>
+            </p>
+          
   
           <h3>Educational Value</h3>
           <p>
             Through this project, we gained hands-on experience with:
           </p>
-          <ul>
-            <li>API integration and data fetching</li>
-            <li>React component architecture</li>
-            <li>State management in frontend applications</li>
-            <li>Responsive UI design principles</li>
-          </ul>
+          <div className="ahead-content">
+            <p>API integration and data fetching, 
+            React component architecture, 
+            State management in frontend applications, 
+           Responsive UI design principles</p>
+          </div>
   
           <h3>Source Code</h3>
           <p>
@@ -47,7 +47,7 @@ const About = () => {
               href="https://github.com/ROpeixoto/FullStack-APIs" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="repo-link"
+              className="repo-pnk"
             >
               View Project Repository
             </a>

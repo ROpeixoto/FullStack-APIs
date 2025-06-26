@@ -217,14 +217,19 @@ body {
 
 .page-content {
   display: flex;
-  flex-direction: column;
-  background: #232231;
+  flex-direction:column;
+  background: #373650;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 8px 8px 8px 8px rgba(97, 95, 95, 0.2);
+  box-shadow: 8px 8px 4px 4px rgba(89, 89, 109, 0.2);
   transition: transform 0.3s;
+  text-align:left;
+  padding: 20px;
 }
 
+.page-content ahead-content {
+  padding-left:10px;
+}
 .main-nav .active-link {
   color: #6200ee;
   border-bottom: 2px solid #6200ee;
@@ -257,7 +262,7 @@ body {
   list-style-position: inside;
   text-align: center;
   display: inline-block;
-  margin: 0 auto;
+  margin: 0;
   width: fit-content;
 }
 
